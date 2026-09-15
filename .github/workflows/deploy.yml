@@ -31,6 +31,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # Installs moon's toolchains (incl. its own proto) before any tasks run in parallel; doing it
+      # lazily inside `moon ci` races the proto shims ("proto-shim: Permission denied").
+      - name: Setup moon toolchains
+        run: moon setup
+
       - name: Deploy web to Cloudflare
         run: moon run web:deploy --color
         env:
