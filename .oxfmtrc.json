@@ -1,0 +1,33 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "jsxSingleQuote": true,
+  "printWidth": 120,
+  "quoteProps": "consistent",
+  "singleQuote": true,
+  "trailingComma": "all",
+  "sortImports": {
+    "groups": ["side_effect", ["builtin", "external"], "workspace", ["parent", "sibling", "index"], "unknown"],
+    "sortSideEffects": false,
+    "customGroups": [
+      {
+        "groupName": "workspace",
+        "elementNamePattern": ["@richburdon/**"]
+      }
+    ],
+    "newlinesBetween": true,
+    "order": "asc"
+  },
+  "sortPackageJson": false,
+  "ignorePatterns": [
+    "**/README.md",
+    "**/package.json",
+    "**/tsconfig.json",
+    "**/tsconfig.*.json",
+    ".moon/cache",
+    "coverage",
+    "dist",
+    "node_modules",
+    "storybook-static",
+    "pnpm-lock.yaml"
+  ]
+}

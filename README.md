@@ -25,7 +25,16 @@ moon run web:storybook
 moon run web:build
 moon run web:typecheck
 moon run web:deploy
+moon run :lint
+moon run :lint-fix
+pnpm format
 ```
+
+## Lint / format
+
+- [oxlint](https://oxc.rs/docs/guide/usage/linter) (type-aware via `oxlint-tsgolint`) with ESLint JS plugins `unused-imports`, `perfectionist`, `import-x` — config in `.oxlintrc.json`; `lint` / `lint-fix` moon tasks are inherited by every TypeScript project.
+- [oxfmt](https://oxc.rs/docs/guide/usage/formatter) for formatting (single quotes, 120 cols, sorted imports) — config in `.oxfmtrc.json`.
+- Dependency versions are pinned once in the `catalog:` of `pnpm-workspace.yaml`; packages reference them as `"catalog:"`.
 
 `moon run :build` / `moon run :typecheck` run the task across all projects.
 

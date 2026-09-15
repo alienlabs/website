@@ -1,6 +1,31 @@
 packages:
-  - "packages/*"
+  - 'packages/*'
+
+catalog:
+  '@ark-ui/solid': ^5.39.2
+  '@cloudflare/vite-plugin': ^1.54.9
+  '@tailwindcss/vite': ^4.3.3
+  '@solid-primitives/i18n': ^2.2.1
+  '@types/d3': ^7.4.3
+  d3: ^7.9.0
+  effect: ^3.22.2
+  eslint: ^10.10.0
+  eslint-plugin-import-x: ^4.17.1
+  eslint-plugin-perfectionist: ^5.11.1
+  eslint-plugin-unused-imports: ^4.4.1
+  oxfmt: ^0.68.0
+  oxlint: 1.83.0
+  oxlint-tsgolint: ^7.0.2001
+  solid-js: ^1.9.15
+  storybook: ^10.6.0
+  storybook-solidjs-vite: ^10.7.2
+  tailwindcss: ^4.3.3
+  typescript: ^6.0.3
+  vite: ^8.3.0
+  vite-plugin-solid: ^2.11.14
+  wrangler: ^4.131.2
 
 onlyBuiltDependencies:
   - esbuild
+  - unrs-resolver
   - workerd

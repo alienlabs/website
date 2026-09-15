@@ -8,11 +8,23 @@
   "scripts": {
     "build": "moon run :build",
     "typecheck": "moon run :typecheck",
+    "lint": "moon run :lint-fix",
+    "lint-check": "moon run :lint",
+    "lint-fix": "moon run :lint-fix",
+    "format": "oxfmt",
+    "format-check": "oxfmt --check",
     "dev": "moon run web:dev",
     "storybook": "moon run web:storybook",
     "deploy": "moon run web:deploy"
   },
   "devDependencies": {
-    "typescript": "^6.0.3"
+    "eslint": "catalog:",
+    "eslint-plugin-import-x": "catalog:",
+    "eslint-plugin-perfectionist": "catalog:",
+    "eslint-plugin-unused-imports": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
+    "oxlint-tsgolint": "catalog:",
+    "typescript": "catalog:"
   }
 }

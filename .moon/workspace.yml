@@ -1,7 +1,7 @@
-$schema: "https://moonrepo.dev/schemas/workspace.json"
+$schema: 'https://moonrepo.dev/schemas/workspace.json'
 
-projects: ["packages/*"]
+projects: ['packages/*']
 
 vcs:
-  defaultBranch: "main"
-  provider: "github"
+  defaultBranch: 'main'
+  provider: 'github'

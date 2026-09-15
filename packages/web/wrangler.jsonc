@@ -3,6 +3,6 @@
   "name": "web",
   "compatibility_date": "2026-09-15",
   "assets": {
-    "not_found_handling": "single-page-application"
-  }
+    "not_found_handling": "single-page-application",
+  },
 }

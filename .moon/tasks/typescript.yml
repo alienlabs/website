@@ -1,19 +1,41 @@
-$schema: "https://moonrepo.dev/schemas/tasks.json"
+$schema: 'https://moonrepo.dev/schemas/tasks.json'
 
 inheritedBy:
-  toolchains: ["typescript"]
+  toolchains: ['typescript']
 
 fileGroups:
   sources:
-    - "src/**/*"
+    - 'src/**/*'
   configs:
-    - "*.{js,ts,json,jsonc}"
-    - "index.html"
+    - '*.{js,ts,json,jsonc}'
+    - 'index.html'
 
 tasks:
   typecheck:
-    command: "tsc --noEmit"
+    command: 'tsc --noEmit'
     inputs:
-      - "@globs(sources)"
-      - "@globs(configs)"
-      - "/tsconfig.options.json"
+      - '@globs(sources)'
+      - '@globs(configs)'
+      - '/tsconfig.options.json'
+
+  lint:
+    command: 'pnpm exec oxlint --config .oxlintrc.json $projectSource'
+    inputs:
+      - '/.oxlintrc.json'
+      - '/package.json'
+      - '@globs(sources)'
+      - '@globs(configs)'
+    options:
+      # ignorePatterns breaks when not run from workspace root.
+      runFromWorkspaceRoot: true
+
+  lint-fix:
+    script: 'pnpm exec oxlint --config .oxlintrc.json --fix $projectSource && pnpm exec oxlint --config .oxlintrc.json --fix $projectSource'
+    inputs:
+      - '/.oxlintrc.json'
+      - '/package.json'
+      - '@globs(sources)'
+      - '@globs(configs)'
+    options:
+      runFromWorkspaceRoot: true
+      runInCI: false
