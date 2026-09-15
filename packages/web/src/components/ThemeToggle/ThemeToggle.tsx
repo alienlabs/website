@@ -1,6 +1,9 @@
 import { useI18n } from '@richburdon/ui-core/i18n';
 import { useTheme } from '@richburdon/ui-core/theme';
 
+// Dynamic keys, declared for `i18next-cli extract`:
+// t('theme.light')
+// t('theme.dark')
 export const ThemeToggle = () => {
   const { t } = useI18n();
   const { theme, toggle } = useTheme();

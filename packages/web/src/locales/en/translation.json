@@ -1,21 +1,18 @@
 {
-  "app": {
-    "title": "Hello World"
-  },
   "hello": {
-    "greeting": "Hello, {{name}}!",
     "clicked_one": "Clicked {{count}} time",
     "clicked_other": "Clicked {{count}} times",
+    "greeting": "Hello, {{name}}!",
     "tooltip": "Click to count"
   },
-  "theme": {
-    "light": "Light",
-    "dark": "Dark",
-    "toggle": "Switch to {{theme}} theme"
-  },
   "locale": {
-    "label": "Language",
     "en": "English",
-    "ja": "Japanese"
+    "ja": "Japanese",
+    "label": "Language"
+  },
+  "theme": {
+    "dark": "Dark",
+    "light": "Light",
+    "toggle": "Switch to {{theme}} theme"
   }
 }

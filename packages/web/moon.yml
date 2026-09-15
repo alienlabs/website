@@ -42,3 +42,19 @@ tasks:
       - '.storybook/**/*'
     outputs:
       - 'storybook-static'
+
+  i18n-extract:
+    command: 'i18next-cli extract'
+    inputs:
+      - '@globs(sources)'
+      - 'i18next.config.ts'
+    options:
+      cache: false
+      runInCI: false
+
+  # Fails if locale files are out of sync with the keys used in source.
+  i18n-check:
+    script: 'i18next-cli extract --ci && i18next-cli lint && i18next-cli status'
+    inputs:
+      - '@globs(sources)'
+      - 'i18next.config.ts'

@@ -44,6 +44,15 @@ pnpm format
 
 Translations live in `packages/web/src/locales/<lng>/<namespace>.json` (i18next layout) and are lazy-loaded per language. `t()` keys and interpolation params are typed from `en/translation.json` via i18next's `CustomTypeOptions` (see `packages/web/src/i18n.ts`).
 
+Locale files are maintained by [i18next-cli](https://github.com/i18next/i18next-cli) (`packages/web/i18next.config.ts`):
+
+```bash
+moon run web:i18n-extract
+moon run web:i18n-check
+```
+
+`i18n-extract` scans source for `t()` calls and adds/removes/sorts keys in every locale (plural forms per CLDR rules). `i18n-check` (run in CI) fails if locale files are out of sync, lints for hardcoded strings, and prints translation status. Keys built dynamically (`t(\`locale.${code}\`)`) must be declared in a comment next to the call: `// t('locale.en')`.
+
 `moon run :build` / `moon run :typecheck` run the task across all projects.
 
 ## Deploy

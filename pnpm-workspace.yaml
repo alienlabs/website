@@ -12,6 +12,7 @@ catalog:
   husky: ^9.1.7
   i18next: ^26.4.2
   i18next-browser-languagedetector: ^8.2.1
+  i18next-cli: ^1.73.3
   i18next-resources-to-backend: ^1.2.3
   knip: ^6.35.1
   lint-staged: ^17.5.1

@@ -22,6 +22,7 @@
     "@cloudflare/vite-plugin": "catalog:",
     "@tailwindcss/vite": "catalog:",
     "i18next": "catalog:",
+    "i18next-cli": "catalog:",
     "storybook": "catalog:",
     "storybook-solidjs-vite": "catalog:",
     "tailwindcss": "catalog:",

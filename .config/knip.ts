@@ -8,7 +8,7 @@ const config: KnipConfig = {
     },
     'packages/*': {
       // `!` marks production entries, so `--production` audits `dependencies` without dev-only files.
-      entry: ['src/index.{ts,tsx}!'],
+      entry: ['src/index.{ts,tsx}!', 'i18next.config.ts'],
       project: ['src/**/*.{ts,tsx}!'],
       // Storybook 10 ships as `storybook` (no `@storybook/*` dep), which knip's auto-detection misses.
       storybook: true,
