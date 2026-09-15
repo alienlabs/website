@@ -1,0 +1,9 @@
+/* Self-hosted web fonts. Import once from the app's root stylesheet. */
+
+@font-face {
+  font-family: 'VanBerger Stencil';
+  font-style: normal;
+  font-weight: normal;
+  font-display: swap;
+  src: url('./vanberger-webfont/VanBerger_Stencil.woff') format('woff');
+}

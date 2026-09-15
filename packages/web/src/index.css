@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@import '@richburdon/ui-core/fonts.css';
 @source '../../ui-core/src';
 
 /* Dark mode is driven by `data-theme` on <html>; see src/theme. */
@@ -6,6 +7,7 @@
 
 /* Semantic tokens exposed as Tailwind utilities (bg-background, text-foreground, ...). */
 @theme inline {
+  --font-display: 'VanBerger Stencil', ui-sans-serif, system-ui, sans-serif;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-muted: var(--muted);

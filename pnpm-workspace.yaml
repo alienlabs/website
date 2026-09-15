@@ -4,6 +4,8 @@ packages:
 catalog:
   '@ark-ui/solid': ^5.39.2
   '@cloudflare/vite-plugin': ^1.54.9
+  '@types/d3': ^7.4.3
+  d3: ^7.9.0
   effect: ^3.22.2
   eslint: ^10.10.0
   eslint-plugin-import-x: ^4.17.1
