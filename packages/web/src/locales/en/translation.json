@@ -1,0 +1,21 @@
+{
+  "app": {
+    "title": "Hello World"
+  },
+  "hello": {
+    "greeting": "Hello, {{name}}!",
+    "clicked_one": "Clicked {{count}} time",
+    "clicked_other": "Clicked {{count}} times",
+    "tooltip": "Click to count"
+  },
+  "theme": {
+    "light": "Light",
+    "dark": "Dark",
+    "toggle": "Switch to {{theme}} theme"
+  },
+  "locale": {
+    "label": "Language",
+    "en": "English",
+    "ja": "Japanese"
+  }
+}

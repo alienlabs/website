@@ -1,11 +1,13 @@
+import { I18nProvider } from '@richburdon/ui-core/i18n';
+import { ThemeProvider } from '@richburdon/ui-core/theme';
+
 import { Hello, LocaleSelect, ThemeToggle } from './components';
-import { I18nProvider } from './i18n';
-import { ThemeProvider } from './theme';
+import { i18nOptions } from './i18n';
 
 export const App = () => {
   return (
     <ThemeProvider>
-      <I18nProvider>
+      <I18nProvider options={i18nOptions}>
         <main class='flex min-h-screen flex-col'>
           <header class='flex justify-end gap-2 p-4'>
             <LocaleSelect />

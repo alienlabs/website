@@ -1,18 +1,20 @@
 import { For } from 'solid-js';
 
-import { type Locale, locales, useI18n } from '../../i18n';
+import { useI18n } from '@richburdon/ui-core/i18n';
+
+import { languages } from '../../i18n';
 
 export const LocaleSelect = () => {
-  const { t, locale, setLocale } = useI18n();
+  const { t, language, changeLanguage } = useI18n();
 
   return (
     <select
       class='rounded-md border border-border bg-background px-2 py-1 text-sm text-muted-foreground'
       aria-label={t('locale.label')}
-      value={locale()}
-      onChange={(event) => setLocale(event.currentTarget.value as Locale)}
+      value={language()}
+      onChange={(event) => void changeLanguage(event.currentTarget.value)}
     >
-      <For each={locales}>{(code) => <option value={code}>{t(`locale.${code}`)}</option>}</For>
+      <For each={languages}>{(code) => <option value={code}>{t(`locale.${code}`)}</option>}</For>
     </select>
   );
 };

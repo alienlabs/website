@@ -1,11 +1,11 @@
 import { Tooltip } from '@ark-ui/solid/tooltip';
-import { format } from 'd3';
 import { Effect } from 'effect';
+import type { TFunction } from 'i18next';
 import { createSignal } from 'solid-js';
 
-import { type Translator, useI18n } from '../../i18n';
+import { useI18n } from '@richburdon/ui-core/i18n';
 
-const greet = (t: Translator, name: string) => Effect.sync(() => t('hello.greeting', { name }));
+const greet = (t: TFunction, name: string) => Effect.sync(() => t('hello.greeting', { name }));
 
 export type HelloProps = {
   name: string;
@@ -24,7 +24,7 @@ export const Hello = (props: HelloProps) => {
           class='rounded-md bg-primary px-4 py-2 text-primary-foreground hover:opacity-90'
           onClick={() => setCount((n) => n + 1)}
         >
-          {t('hello.clicked', { count: format(',d')(count()) })}
+          {t('hello.clicked', { count: count() })}
         </Tooltip.Trigger>
         <Tooltip.Positioner>
           <Tooltip.Content class='rounded border border-border bg-muted px-2 py-1 text-sm text-muted-foreground'>

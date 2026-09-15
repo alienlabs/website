@@ -1,0 +1,20 @@
+{
+  "app": {
+    "title": "ハローワールド"
+  },
+  "hello": {
+    "greeting": "こんにちは、{{name}}！",
+    "clicked_other": "{{count}}回クリックしました",
+    "tooltip": "クリックしてカウント"
+  },
+  "theme": {
+    "light": "ライト",
+    "dark": "ダーク",
+    "toggle": "{{theme}}テーマに切り替える"
+  },
+  "locale": {
+    "label": "言語",
+    "en": "英語",
+    "ja": "日本語"
+  }
+}

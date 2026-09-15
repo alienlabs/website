@@ -14,15 +14,14 @@
   },
   "dependencies": {
     "@ark-ui/solid": "catalog:",
-    "@solid-primitives/i18n": "catalog:",
-    "d3": "catalog:",
+    "@richburdon/ui-core": "workspace:*",
     "effect": "catalog:",
     "solid-js": "catalog:"
   },
   "devDependencies": {
     "@cloudflare/vite-plugin": "catalog:",
     "@tailwindcss/vite": "catalog:",
-    "@types/d3": "catalog:",
+    "i18next": "catalog:",
     "storybook": "catalog:",
     "storybook-solidjs-vite": "catalog:",
     "tailwindcss": "catalog:",

@@ -2,10 +2,12 @@ import '../src/index.css';
 
 import type { Preview } from 'storybook-solidjs-vite';
 
-import { I18nProvider, type Locale } from '../src/i18n';
-import { ThemeProvider, useTheme } from '../src/theme';
+import { I18nProvider } from '@richburdon/ui-core/i18n';
+import { type Theme, ThemeProvider, useTheme } from '@richburdon/ui-core/theme';
 
-const ApplyTheme = (props: { theme: 'light' | 'dark'; children: unknown }) => {
+import { i18nOptions, languages } from '../src/i18n';
+
+const ApplyTheme = (props: { theme: Theme; children: unknown }) => {
   const { setMode } = useTheme();
   setMode(props.theme);
   return <>{props.children}</>;
@@ -19,7 +21,7 @@ const preview: Preview = {
     },
     locale: {
       description: 'Locale',
-      toolbar: { title: 'Locale', icon: 'globe', items: ['en', 'es'], dynamicTitle: true },
+      toolbar: { title: 'Locale', icon: 'globe', items: [...languages], dynamicTitle: true },
     },
   },
   initialGlobals: {
@@ -29,8 +31,8 @@ const preview: Preview = {
   decorators: [
     (Story, context) => (
       <ThemeProvider>
-        <ApplyTheme theme={context.globals.theme as 'light' | 'dark'}>
-          <I18nProvider locale={context.globals.locale as Locale}>
+        <ApplyTheme theme={context.globals.theme as Theme}>
+          <I18nProvider options={{ ...i18nOptions, lng: context.globals.locale as string }}>
             <div class='min-h-screen bg-background p-8 text-foreground'>
               <Story />
             </div>

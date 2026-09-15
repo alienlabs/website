@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Setup toolchain (proto + moon from .prototools)
+        uses: moonrepo/setup-toolchain@v0
+        with:
+          auto-install: true
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Package conventions
+        run: pnpm pkg-lint
+
+      - name: Format
+        run: pnpm format-check
+
+      - name: Dead code and dependencies
+        run: pnpm knip
+
+      - name: Build, lint, typecheck (affected)
+        run: moon ci --color

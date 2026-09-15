@@ -1,5 +1,5 @@
-import { useI18n } from '../../i18n';
-import { useTheme } from '../../theme';
+import { useI18n } from '@richburdon/ui-core/i18n';
+import { useTheme } from '@richburdon/ui-core/theme';
 
 export const ThemeToggle = () => {
   const { t } = useI18n();
