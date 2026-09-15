@@ -1,0 +1,44 @@
+$schema: "https://moonrepo.dev/schemas/project.json"
+
+layer: "application"
+language: "typescript"
+stack: "frontend"
+
+tasks:
+  dev:
+    command: "vite"
+    preset: "server"
+
+  build:
+    command: "vite build"
+    inputs:
+      - "@globs(sources)"
+      - "@globs(configs)"
+      - "public/**/*"
+    outputs:
+      - "dist"
+
+  preview:
+    command: "vite preview"
+    deps: ["build"]
+    preset: "server"
+
+  deploy:
+    command: "wrangler deploy"
+    deps: ["build"]
+    options:
+      cache: false
+      runInCI: false
+
+  storybook:
+    command: "storybook dev -p 6006"
+    preset: "server"
+
+  build-storybook:
+    command: "storybook build"
+    inputs:
+      - "@globs(sources)"
+      - "@globs(configs)"
+      - ".storybook/**/*"
+    outputs:
+      - "storybook-static"

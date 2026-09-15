@@ -1,0 +1,19 @@
+$schema: "https://moonrepo.dev/schemas/tasks.json"
+
+inheritedBy:
+  toolchains: ["typescript"]
+
+fileGroups:
+  sources:
+    - "src/**/*"
+  configs:
+    - "*.{js,ts,json,jsonc}"
+    - "index.html"
+
+tasks:
+  typecheck:
+    command: "tsc --noEmit"
+    inputs:
+      - "@globs(sources)"
+      - "@globs(configs)"
+      - "/tsconfig.options.json"

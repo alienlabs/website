@@ -1,0 +1,18 @@
+{
+  "name": "@richburdon/website",
+  "private": true,
+  "packageManager": "pnpm@10.28.0",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "build": "moon run :build",
+    "typecheck": "moon run :typecheck",
+    "dev": "moon run web:dev",
+    "storybook": "moon run web:storybook",
+    "deploy": "moon run web:deploy"
+  },
+  "devDependencies": {
+    "typescript": "^6.0.3"
+  }
+}
