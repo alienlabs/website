@@ -7,6 +7,8 @@
   "routes": [
     { "pattern": "alienlabs.io", "custom_domain": true },
     { "pattern": "www.alienlabs.io", "custom_domain": true },
+    { "pattern": "alienlaboratories.com", "custom_domain": true },
+    { "pattern": "www.alienlaboratories.com", "custom_domain": true },
   ],
   "assets": {
     "not_found_handling": "single-page-application",
