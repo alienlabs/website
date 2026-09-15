@@ -29,7 +29,7 @@ export type I18nOptions = {
 
 /**
  * Creates and initializes an i18next instance. Resources are lazy-loaded per language.
- * Detection order: localStorage (`i18nextLng`), navigator; the choice is cached to localStorage.
+ * Detection order: `?lng=` query, localStorage (`i18nextLng`), navigator; the choice is cached to localStorage.
  */
 export const createI18n = async (options: I18nOptions): Promise<I18n> => {
   const instance = i18next.createInstance();
@@ -43,7 +43,7 @@ export const createI18n = async (options: I18nOptions): Promise<I18n> => {
     fallbackLng: options.supportedLngs[0],
     load: 'languageOnly',
     interpolation: { escapeValue: false },
-    detection: { order: ['localStorage', 'navigator'], caches: ['localStorage'] },
+    detection: { order: ['querystring', 'localStorage', 'navigator'], caches: ['localStorage'] },
     ...options.init,
   });
   return instance;

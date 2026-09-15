@@ -2,6 +2,14 @@
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "web",
   "compatibility_date": "2026-09-15",
+  "account_id": "96951f7c7cb11abdb9281c9efe7be54f",
+  "workers_dev": false,
+  "routes": [
+    { "pattern": "alienlabs.io", "custom_domain": true },
+    { "pattern": "www.alienlabs.io", "custom_domain": true },
+    { "pattern": "alienlaboratories.com", "custom_domain": true },
+    { "pattern": "www.alienlaboratories.com", "custom_domain": true },
+  ],
   "assets": {
     "not_found_handling": "single-page-application",
   },

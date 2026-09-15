@@ -4,6 +4,9 @@ packages:
 catalog:
   '@ark-ui/solid': ^5.39.2
   '@cloudflare/vite-plugin': ^1.54.9
+  '@types/d3': ^7.4.3
+  clsx: ^2.1.1
+  d3: ^7.9.0
   effect: ^3.22.2
   eslint: ^10.10.0
   eslint-plugin-import-x: ^4.17.1
@@ -22,6 +25,7 @@ catalog:
   solid-js: ^1.9.15
   storybook: ^10.6.0
   storybook-solidjs-vite: ^10.7.2
+  tailwind-merge: ^3.4.0
   tailwindcss: ^4.3.3
   '@tailwindcss/vite': ^4.3.3
   typescript: ^6.0.3

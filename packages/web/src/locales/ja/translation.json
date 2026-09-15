@@ -4,6 +4,9 @@
     "greeting": "こんにちは、{{name}}！",
     "tooltip": "クリックしてカウント"
   },
+  "hero": {
+    "start": "スタート"
+  },
   "locale": {
     "en": "英語",
     "ja": "日本語",

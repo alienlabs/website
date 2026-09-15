@@ -7,10 +7,15 @@ import { useI18n } from '@richburdon/ui-core/i18n';
 
 const greet = (t: TFunction, name: string) => Effect.sync(() => t('hello.greeting', { name }));
 
+/** @public */
 export type HelloProps = {
   name: string;
 };
 
+/**
+ * Demo component (i18n, Effect, Ark UI); shown in Storybook only.
+ * @public
+ */
 export const Hello = (props: HelloProps) => {
   const { t } = useI18n();
   const [count, setCount] = createSignal(0);

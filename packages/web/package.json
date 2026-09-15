@@ -15,12 +15,14 @@
   "dependencies": {
     "@ark-ui/solid": "catalog:",
     "@richburdon/ui-core": "workspace:*",
+    "d3": "catalog:",
     "effect": "catalog:",
     "solid-js": "catalog:"
   },
   "devDependencies": {
     "@cloudflare/vite-plugin": "catalog:",
     "@tailwindcss/vite": "catalog:",
+    "@types/d3": "catalog:",
     "i18next": "catalog:",
     "i18next-cli": "catalog:",
     "storybook": "catalog:",
