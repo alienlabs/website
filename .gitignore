@@ -11,3 +11,6 @@ storybook-static/
 # wrangler
 .wrangler/
 .dev.vars
+
+# secrets (see .env.tpl)
+.env
