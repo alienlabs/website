@@ -1,0 +1,18 @@
+{
+  "hello": {
+    "clicked_one": "Clicked {{count}} time",
+    "clicked_other": "Clicked {{count}} times",
+    "greeting": "Hello, {{name}}!",
+    "tooltip": "Click to count"
+  },
+  "locale": {
+    "en": "English",
+    "ja": "Japanese",
+    "label": "Language"
+  },
+  "theme": {
+    "dark": "Dark",
+    "light": "Light",
+    "toggle": "Switch to {{theme}} theme"
+  }
+}

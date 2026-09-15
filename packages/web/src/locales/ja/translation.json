@@ -1,0 +1,17 @@
+{
+  "hello": {
+    "clicked_other": "{{count}}回クリックしました",
+    "greeting": "こんにちは、{{name}}！",
+    "tooltip": "クリックしてカウント"
+  },
+  "locale": {
+    "en": "英語",
+    "ja": "日本語",
+    "label": "言語"
+  },
+  "theme": {
+    "dark": "ダーク",
+    "light": "ライト",
+    "toggle": "{{theme}}テーマに切り替える"
+  }
+}

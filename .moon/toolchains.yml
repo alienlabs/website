@@ -1,0 +1,17 @@
+$schema: 'https://moonrepo.dev/schemas/toolchains.json'
+
+node:
+  version: '24.11.1'
+
+pnpm:
+  version: '10.28.0'
+
+javascript:
+  packageManager: 'pnpm'
+  dedupeOnLockfileChange: true
+  inferTasksFromScripts: false
+  syncProjectWorkspaceDependencies: true
+
+typescript:
+  includeSharedTypes: false
+  syncProjectReferences: false

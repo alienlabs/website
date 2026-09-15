@@ -1,0 +1,41 @@
+{
+  "name": "@richburdon/website",
+  "private": true,
+  "packageManager": "pnpm@10.28.0",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "build": "moon run :build",
+    "typecheck": "moon run :typecheck",
+    "lint": "moon run :lint-fix",
+    "lint-check": "moon run :lint",
+    "lint-fix": "moon run :lint-fix",
+    "format": "oxfmt",
+    "format-check": "oxfmt --check",
+    "dev": "moon run web:dev",
+    "storybook": "moon run web:storybook",
+    "deploy": "moon run web:deploy",
+    "prepare": "husky",
+    "knip": "knip --config .config/knip.ts --no-config-hints && knip --config .config/knip.ts --no-config-hints --production --strict --exclude binaries,files",
+    "pkg-lint": "node scripts/pkg-lint.mjs"
+  },
+  "devDependencies": {
+    "eslint": "catalog:",
+    "eslint-plugin-import-x": "catalog:",
+    "eslint-plugin-perfectionist": "catalog:",
+    "eslint-plugin-unused-imports": "catalog:",
+    "husky": "catalog:",
+    "knip": "catalog:",
+    "lint-staged": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
+    "oxlint-tsgolint": "catalog:",
+    "typescript": "catalog:"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,mjs,cjs,json,jsonc,yml,yaml,css,md}": "oxfmt",
+    "*.{ts,tsx,js,mjs,cjs}": "oxlint --config .oxlintrc.json --fix",
+    "**/package.json": "node scripts/pkg-lint.mjs"
+  }
+}

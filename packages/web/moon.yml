@@ -1,0 +1,60 @@
+$schema: 'https://moonrepo.dev/schemas/project.json'
+
+layer: 'application'
+language: 'typescript'
+stack: 'frontend'
+
+tasks:
+  dev:
+    command: 'vite'
+    preset: 'server'
+
+  build:
+    command: 'vite build'
+    inputs:
+      - '@globs(sources)'
+      - '@globs(configs)'
+      - 'public/**/*'
+    outputs:
+      - 'dist'
+
+  preview:
+    command: 'vite preview'
+    deps: ['build']
+    preset: 'server'
+
+  deploy:
+    command: 'wrangler deploy'
+    deps: ['build']
+    options:
+      cache: false
+      runInCI: false
+
+  storybook:
+    command: 'storybook dev -p 6006'
+    preset: 'server'
+
+  build-storybook:
+    command: 'storybook build'
+    inputs:
+      - '@globs(sources)'
+      - '@globs(configs)'
+      - '.storybook/**/*'
+    outputs:
+      - 'storybook-static'
+
+  i18n-extract:
+    command: 'i18next-cli extract'
+    inputs:
+      - '@globs(sources)'
+      - 'i18next.config.ts'
+    options:
+      cache: false
+      runInCI: false
+
+  # Fails if locale files are out of sync with the keys used in source.
+  i18n-check:
+    script: 'i18next-cli extract --ci && i18next-cli lint && i18next-cli status'
+    inputs:
+      - '@globs(sources)'
+      - 'i18next.config.ts'

@@ -1,0 +1,132 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "categories": {},
+  "env": {
+    "builtin": true
+  },
+  "globals": {},
+  "ignorePatterns": ["*.d.ts", "**/dist/**", "**/storybook-static/**", ".claude/**", ".moon/**"],
+  "jsPlugins": [
+    "eslint-plugin-unused-imports",
+    "eslint-plugin-perfectionist",
+    {
+      "name": "import-x-js",
+      "specifier": "eslint-plugin-import-x"
+    }
+  ],
+  "options": {
+    "denyWarnings": true,
+    "typeAware": true
+  },
+  "plugins": ["eslint", "typescript", "unicorn", "oxc", "promise", "vitest", "jsdoc", "node"],
+  "rules": {
+    "eslint/curly": ["error", "all"],
+    "eslint/no-async-promise-executor": "off",
+    "eslint/no-constant-binary-expression": "off",
+    "eslint/no-constant-condition": "off",
+    "eslint/no-dupe-else-if": "off",
+    "eslint/no-unassigned-vars": "off",
+    "eslint/no-unsafe-optional-chaining": "off",
+    "eslint/no-unused-expressions": "off",
+    "eslint/no-unused-private-class-members": "off",
+    "eslint/no-useless-catch": "off",
+    "eslint/no-useless-escape": "off",
+    "eslint/no-useless-rename": "off",
+    "eslint/require-yield": "off",
+    "import-x-js/order": "off",
+    "jsdoc/check-tag-names": "off",
+    "jsdoc/no-defaults": "off",
+    "jsdoc/require-yields": "off",
+    "no-unused-vars": "off",
+    "oxc/only-used-in-recursion": "off",
+    "perfectionist/sort-named-exports": [
+      "warn",
+      {
+        "customGroups": [
+          {
+            "elementNamePattern": "^[A-Z][A-Za-z0-9_]*$",
+            "groupName": "capitalized"
+          },
+          {
+            "elementNamePattern": "^[a-z][A-Za-z0-9_]*$",
+            "groupName": "lowercase"
+          }
+        ],
+        "groups": ["capitalized", "lowercase"],
+        "order": "asc",
+        "type": "natural"
+      }
+    ],
+    "perfectionist/sort-named-imports": [
+      "warn",
+      {
+        "customGroups": [
+          {
+            "elementNamePattern": "^[A-Z][A-Za-z0-9_]*$",
+            "groupName": "capitalized"
+          },
+          {
+            "elementNamePattern": "^[a-z][A-Za-z0-9_]*$",
+            "groupName": "lowercase"
+          }
+        ],
+        "groups": ["capitalized", "lowercase"],
+        "order": "asc",
+        "type": "natural"
+      }
+    ],
+    "promise/no-callback-in-promise": "off",
+    "promise/valid-params": "off",
+    "typescript/await-thenable": "off",
+    "typescript/no-base-to-string": "off",
+    "typescript/no-duplicate-type-constituents": "off",
+    "typescript/no-floating-promises": "error",
+    "typescript/no-for-in-array": "off",
+    "typescript/no-meaningless-void-operator": "off",
+    "typescript/no-misused-spread": "off",
+    "typescript/no-redundant-type-constituents": "off",
+    "typescript/no-this-alias": "off",
+    "typescript/no-unnecessary-parameter-property-assignment": "off",
+    "typescript/no-unsafe-unary-minus": "off",
+    "typescript/no-useless-default-assignment": "off",
+    "typescript/no-useless-empty-export": "off",
+    "typescript/require-array-sort-compare": "off",
+    "typescript/restrict-template-expressions": "off",
+    "typescript/unbound-method": "off",
+    "unicorn/no-await-in-promise-methods": "off",
+    "unicorn/no-empty-file": "off",
+    "unicorn/no-new-array": "off",
+    "unicorn/no-single-promise-in-promise-methods": "off",
+    "unicorn/no-thenable": "off",
+    "unicorn/no-useless-fallback-in-spread": "off",
+    "unicorn/no-useless-spread": "off",
+    "unicorn/prefer-string-starts-ends-with": "off",
+    "unused-imports/no-unused-imports": "warn",
+    "vitest/expect-expect": "off",
+    "vitest/no-conditional-expect": "off",
+    "vitest/no-disabled-tests": "off",
+    "vitest/no-focused-tests": "off",
+    "vitest/no-standalone-expect": "off",
+    "vitest/require-mock-type-parameters": "off",
+    "vitest/require-to-throw-message": "off",
+    "vitest/valid-describe-callback": "off",
+    "vitest/valid-expect": "off",
+    "vitest/valid-title": "off",
+    "vitest/warn-todo": "off"
+  },
+  "settings": {
+    "jsdoc": {
+      "augmentsExtendsReplacesDocs": false,
+      "exemptDestructuredRootsFromChecks": false,
+      "ignoreInternal": false,
+      "ignorePrivate": false,
+      "ignoreReplacesDocs": true,
+      "implementsReplacesDocs": false,
+      "overrideReplacesDocs": true,
+      "tagNamePreference": {}
+    },
+    "vitest": {
+      "typecheck": false
+    }
+  }
+}

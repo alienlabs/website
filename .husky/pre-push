@@ -1,0 +1,11 @@
+[ -n "$CI" ] && exit 0
+
+# Refuse direct pushes to main; use a PR. Override with: push_to_main=true git push origin main
+while read -r _local_ref _local_sha remote_ref _remote_sha; do
+  if [ "$remote_ref" = "refs/heads/main" ] && [ "${push_to_main:-}" != "true" ]; then
+    echo "Tried pushing to main. If you know what you're doing, run:"
+    echo "  push_to_main=true git push origin main"
+    exit 1
+  fi
+done
+exit 0
