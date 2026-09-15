@@ -18,20 +18,20 @@ import { type Drift, Mesh, type MeshController, NO_DRIFT } from '../Mesh';
 import { createAmbience } from './sound';
 
 /**
- * Intro states, in order: the Mesh fades in and rests; drifts; dims; the Logo fades in; spins;
+ * Hero states, in order: the Mesh fades in and rests; drifts; dims; the Logo fades in; spins;
  * opens (the mesh widens its gaps with it); the LogoType appears beneath.
  * @public
  */
-export const INTRO_STATES = ['static', 'drift', 'faded', 'visible', 'spun', 'open', 'named'] as const;
+export const HERO_STATES = ['static', 'drift', 'faded', 'visible', 'spun', 'open', 'named'] as const;
 /** @public */
-export type IntroState = (typeof INTRO_STATES)[number];
+export type HeroState = (typeof HERO_STATES)[number];
 
 /** @public */
-export type LogoIntroController = {
+export type HeroController = {
   /** Current (or target, while transitioning) state. */
-  state: () => IntroState;
+  state: () => HeroState;
   /** Animate to `state`, stepping through intermediate states in order; going backwards resets first. */
-  set: (state: IntroState) => Promise<void>;
+  set: (state: HeroState) => Promise<void>;
   /** Advance to the next state (wrapping round to the start). */
   step: () => Promise<void>;
   /** Run the whole intro from the start; resolves when done. */
@@ -53,7 +53,7 @@ type Parts = {
   logoType?: LogoTypeController;
 };
 
-type IntroContext = {
+type HeroContext = {
   parts: Parts;
   layout: Accessor<Layout | undefined>;
   drift: Accessor<Drift>;
@@ -62,12 +62,12 @@ type IntroContext = {
   measure: () => void;
 };
 
-const Context = createContext<IntroContext>();
+const Context = createContext<HeroContext>();
 
-const useIntro = (part: string) => {
+const useHero = (part: string) => {
   const context = useContext(Context);
   if (!context) {
-    throw new Error(`LogoIntro.${part} must be inside LogoIntro.Root`);
+    throw new Error(`Hero.${part} must be inside Hero.Root`);
   }
   return context;
 };
@@ -75,30 +75,30 @@ const useIntro = (part: string) => {
 const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
 /** @public */
-export type LogoIntroRootProps = ParentProps<{
+export type HeroRootProps = ParentProps<{
   class?: string;
   /** Play on mount (default: true). */
   autoplay?: boolean;
   /** Play the ambience while the mesh drifts (default: true; browsers may refuse until a gesture). */
   sound?: boolean;
   /** Receives the state controls once mounted. */
-  controller?: (controller: LogoIntroController) => void;
+  controller?: (controller: HeroController) => void;
 }>;
 
 /**
- * Full-screen logo intro. Composite: `Root` owns the state machine and alignment; `Mesh` is the
+ * Full-screen hero (logo intro). Composite: `Root` owns the state machine and alignment; `Mesh` is the
  * monochrome tiling layer; `Content` is the layer that follows the mesh's drift; `Logo` and
  * `LogoType` go inside it.
  *
- *   <LogoIntro.Root>
- *     <LogoIntro.Mesh />
- *     <LogoIntro.Content>
- *       <LogoIntro.Logo />
- *       <LogoIntro.LogoType />
- *     </LogoIntro.Content>
- *   </LogoIntro.Root>
+ *   <Hero.Root>
+ *     <Hero.Mesh />
+ *     <Hero.Content>
+ *       <Hero.Logo />
+ *       <Hero.LogoType />
+ *     </Hero.Content>
+ *   </Hero.Root>
  */
-const Root = (props: LogoIntroRootProps) => {
+const Root = (props: HeroRootProps) => {
   let container!: HTMLDivElement;
   const parts: Parts = {};
   const [layout, setLayout] = createSignal<Layout>();
@@ -124,7 +124,7 @@ const Root = (props: LogoIntroRootProps) => {
     });
   };
 
-  let current: IntroState = 'static';
+  let current: HeroState = 'static';
   let run = 0; // Incremented by reset/set so a superseded run stops stepping.
   const ambience = createAmbience();
   onCleanup(() => ambience.stop());
@@ -140,7 +140,7 @@ const Root = (props: LogoIntroRootProps) => {
   };
 
   // Each state is owned by one part (both mesh and logo for `open`); the others keep their state.
-  const enter = (state: IntroState) => {
+  const enter = (state: HeroState) => {
     switch (state) {
       case 'drift':
         if (props.sound ?? true) {
@@ -159,14 +159,14 @@ const Root = (props: LogoIntroRootProps) => {
     }
   };
 
-  const set = async (target: IntroState) => {
-    const from = INTRO_STATES.indexOf(current);
-    const to = INTRO_STATES.indexOf(target);
+  const set = async (target: HeroState) => {
+    const from = HERO_STATES.indexOf(current);
+    const to = HERO_STATES.indexOf(target);
     if (to <= from) {
       reset();
     }
     const id = ++run;
-    for (const state of INTRO_STATES.slice(to <= from ? 1 : from + 1, to + 1)) {
+    for (const state of HERO_STATES.slice(to <= from ? 1 : from + 1, to + 1)) {
       current = state;
       await enter(state);
       if (id !== run) {
@@ -175,11 +175,11 @@ const Root = (props: LogoIntroRootProps) => {
     }
   };
 
-  const step = () => set(INTRO_STATES[(INTRO_STATES.indexOf(current) + 1) % INTRO_STATES.length]!);
+  const step = () => set(HERO_STATES[(HERO_STATES.indexOf(current) + 1) % HERO_STATES.length]!);
 
   const play = async () => {
     reset();
-    for (const state of INTRO_STATES) {
+    for (const state of HERO_STATES) {
       const id = run;
       if (state !== 'static') {
         await set(state);
@@ -187,7 +187,7 @@ const Root = (props: LogoIntroRootProps) => {
           return; // Superseded.
         }
       }
-      const hold = (HOLD as Partial<Record<IntroState, number>>)[state];
+      const hold = (HOLD as Partial<Record<HeroState, number>>)[state];
       if (hold) {
         await sleep(hold);
       }
@@ -214,15 +214,15 @@ const Root = (props: LogoIntroRootProps) => {
   );
 };
 
-type LogoIntroMeshProps = {
+type HeroMeshProps = {
   class?: string;
   /** See Mesh `levels`. */
   levels?: number;
 };
 
 /** The tiling layer, aligned to the Logo's closed hexagon. */
-const IntroMesh = (props: LogoIntroMeshProps) => {
-  const { parts, layout, setDrift } = useIntro('Mesh');
+const HeroMesh = (props: HeroMeshProps) => {
+  const { parts, layout, setDrift } = useHero('Mesh');
   return (
     <Show when={layout()}>
       {(l) => (
@@ -241,7 +241,7 @@ const IntroMesh = (props: LogoIntroMeshProps) => {
 
 /** The layer that follows the mesh's drift; holds the Logo and LogoType, centred as a column. */
 const Content = (props: ParentProps<{ class?: string }>) => {
-  const { drift } = useIntro('Content');
+  const { drift } = useHero('Content');
   return (
     <div
       class={props.class ?? 'absolute inset-0 flex origin-center flex-col items-center justify-center gap-8'}
@@ -252,11 +252,11 @@ const Content = (props: ParentProps<{ class?: string }>) => {
   );
 };
 
-type LogoIntroLogoProps = Omit<JSX.SvgSVGAttributes<SVGSVGElement>, 'children'>;
+type HeroLogoProps = Omit<JSX.SvgSVGAttributes<SVGSVGElement>, 'children'>;
 
 /** The six-segment logo, driven by the Root. */
-const IntroLogo = (props: LogoIntroLogoProps) => {
-  const { parts, measure } = useIntro('Logo');
+const HeroLogo = (props: HeroLogoProps) => {
+  const { parts, measure } = useHero('Logo');
   const [local, rest] = splitProps(props, ['class']);
   return (
     <Logo
@@ -272,18 +272,18 @@ const IntroLogo = (props: LogoIntroLogoProps) => {
   );
 };
 
-type LogoIntroLogoTypeProps = Omit<JSX.HTMLAttributes<HTMLDivElement>, 'children'>;
+type HeroLogoTypeProps = Omit<JSX.HTMLAttributes<HTMLDivElement>, 'children'>;
 
 /** The wordmark, shown once the logo has opened. */
-const IntroLogoType = (props: LogoIntroLogoTypeProps) => {
-  const { parts } = useIntro('LogoType');
+const HeroLogoType = (props: HeroLogoTypeProps) => {
+  const { parts } = useHero('LogoType');
   return <LogoType animate='manual' controller={(controller) => (parts.logoType = controller)} {...props} />;
 };
 
-export const LogoIntro = {
+export const Hero = {
   Root,
-  Mesh: IntroMesh,
+  Mesh: HeroMesh,
   Content,
-  Logo: IntroLogo,
-  LogoType: IntroLogoType,
+  Logo: HeroLogo,
+  LogoType: HeroLogoType,
 };

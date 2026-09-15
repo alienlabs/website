@@ -1,29 +1,23 @@
 import { createSignal } from 'solid-js';
 import type { Meta, StoryObj } from 'storybook-solidjs-vite';
 
-import {
-  INTRO_STATES,
-  type IntroState,
-  LogoIntro,
-  type LogoIntroController,
-  type LogoIntroRootProps,
-} from './LogoIntro';
+import { Hero, HERO_STATES, type HeroController, type HeroRootProps, type HeroState } from './Hero';
 
-const Intro = (props: LogoIntroRootProps) => (
-  <LogoIntro.Root {...props}>
-    <LogoIntro.Mesh />
-    <LogoIntro.Content>
-      <LogoIntro.Logo />
-      <LogoIntro.LogoType />
-    </LogoIntro.Content>
-  </LogoIntro.Root>
+const HeroDemo = (props: HeroRootProps) => (
+  <Hero.Root {...props}>
+    <Hero.Mesh />
+    <Hero.Content>
+      <Hero.Logo />
+      <Hero.LogoType />
+    </Hero.Content>
+  </Hero.Root>
 );
 
 const meta = {
-  title: 'Components/LogoIntro',
-  component: Intro,
+  title: 'Components/Hero',
+  component: HeroDemo,
   parameters: { layout: 'fullscreen' },
-} satisfies Meta<typeof Intro>;
+} satisfies Meta<typeof HeroDemo>;
 
 export default meta;
 
@@ -42,9 +36,9 @@ export const Manual: Story = {
     autoplay: false,
   },
   render: (args) => {
-    let intro: LogoIntroController | undefined;
-    const [state, setState] = createSignal<IntroState>('static');
-    const next = () => INTRO_STATES[(INTRO_STATES.indexOf(state()) + 1) % INTRO_STATES.length];
+    let intro: HeroController | undefined;
+    const [state, setState] = createSignal<HeroState>('static');
+    const next = () => HERO_STATES[(HERO_STATES.indexOf(state()) + 1) % HERO_STATES.length];
     const sync = () => setState(intro?.state() ?? 'static');
     const button =
       'rounded-md border border-border bg-background px-3 py-1 text-sm text-muted-foreground hover:bg-muted';
@@ -83,7 +77,7 @@ export const Manual: Story = {
           </button>
           <span class='text-sm text-muted-foreground'>{state()}</span>
         </div>
-        <Intro {...args} controller={(controller) => (intro = controller)} />
+        <HeroDemo {...args} controller={(controller) => (intro = controller)} />
       </>
     );
   },

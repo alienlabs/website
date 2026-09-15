@@ -2,6 +2,8 @@ import { easeCubicOut, select } from 'd3';
 import type { JSX } from 'solid-js';
 import { onCleanup, onMount, splitProps } from 'solid-js';
 
+const LOGO_TYPE_TEXT = 'alien labs';
+
 /** States: `hidden` → `visible` (fades in, rising slightly). */
 const LOGO_TYPE_STATES = ['hidden', 'visible'] as const;
 export type LogoTypeState = (typeof LOGO_TYPE_STATES)[number];
@@ -80,7 +82,7 @@ export const LogoType = (props: LogoTypeProps) => {
     <div ref={ref} class={`font-display text-4xl tracking-[0.3em] select-none ${local.class ?? ''}`} {...rest}>
       {/* Brand name, not translated. */}
       {/* i18next-instrument-ignore-next-line */}
-      ALIEN LABS
+      {LOGO_TYPE_TEXT}
     </div>
   );
 };

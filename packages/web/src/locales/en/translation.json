@@ -5,6 +5,9 @@
     "greeting": "Hello, {{name}}!",
     "tooltip": "Click to count"
   },
+  "hero": {
+    "start": "Start"
+  },
   "locale": {
     "en": "English",
     "ja": "Japanese",

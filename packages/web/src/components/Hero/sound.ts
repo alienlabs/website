@@ -1,6 +1,6 @@
 // Ambience that plays while the mesh drifts. Browsers only allow playback after a user gesture, so
 // autoplay may be refused (ignored) while a click-driven intro will sound.
-import ambienceUrl from '@richburdon/ui-core/assets/sounds/77838__jovica__layers-005-heavy-water-space-ambience-d2.flac?url';
+import ambienceUrl from '@richburdon/ui-core/assets/sounds/ambience.m4a?url';
 
 const FADE_MS = 2000;
 const VOLUME = 0.6;
