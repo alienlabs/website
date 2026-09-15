@@ -25,6 +25,9 @@ jobs:
         uses: moonrepo/setup-toolchain@v0
         with:
           auto-install: true
+          # Same version moon (2.5.4) wants; otherwise moon installs it mid-run while parallel
+          # tasks are already executing the proto shims (intermittent "Permission denied").
+          proto-version: '0.60.2'
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
