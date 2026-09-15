@@ -14,7 +14,13 @@ export const App = () => {
             <ThemeToggle />
           </header>
           <div class='relative flex-1'>
-            <LogoIntro class='absolute inset-0 overflow-hidden' />
+            <LogoIntro.Root class='absolute inset-0 overflow-hidden'>
+              <LogoIntro.Mesh />
+              <LogoIntro.Content>
+                <LogoIntro.Logo />
+                <LogoIntro.LogoType />
+              </LogoIntro.Content>
+            </LogoIntro.Root>
           </div>
           <div class='flex justify-center p-4'>
             <Hello name='World' />

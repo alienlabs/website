@@ -1,15 +1,28 @@
-import { Show, createSignal, onCleanup, onMount } from 'solid-js';
+import {
+  type Accessor,
+  type JSX,
+  type ParentProps,
+  Show,
+  createContext,
+  createSignal,
+  onCleanup,
+  onMount,
+  splitProps,
+  useContext,
+} from 'solid-js';
 
 import { CLOSED_SCALE, HEX_CENTER, Logo, LOGO_SIZE, type LogoController } from '../Logo';
 import { type Point } from '../Logo/geometry';
+import { LogoType, type LogoTypeController } from '../LogoType';
 import { type Drift, Mesh, type MeshController, NO_DRIFT } from '../Mesh';
 
 /**
- * Intro states, in order. The first three belong to the Mesh (at rest; drifting; dimmed), the last
- * three to the Logo (fades in; spins; opens) — the mesh widens its gaps along with the opening.
+ * Intro states, in order: the Mesh fades in and rests; drifts; dims; the Logo fades in; spins;
+ * opens (the mesh widens its gaps with it); the LogoType appears beneath.
  * @public
  */
-export const INTRO_STATES = ['static', 'drift', 'faded', 'visible', 'spun', 'open'] as const;
+export const INTRO_STATES = ['static', 'drift', 'faded', 'visible', 'spun', 'open', 'named'] as const;
+/** @public */
 export type IntroState = (typeof INTRO_STATES)[number];
 
 /** @public */
@@ -20,18 +33,10 @@ export type LogoIntroController = {
   set: (state: IntroState) => Promise<void>;
   /** Advance to the next state (wrapping round to the start). */
   step: () => Promise<void>;
-  /** Run the whole intro from the start; resolves when open. */
+  /** Run the whole intro from the start; resolves when done. */
   play: () => Promise<void>;
   /** Interrupt and return to the start state. */
   reset: () => void;
-};
-
-export type LogoIntroProps = {
-  class?: string;
-  /** Play on mount (default: true). */
-  autoplay?: boolean;
-  /** Receives the state controls once mounted. */
-  controller?: (controller: LogoIntroController) => void;
 };
 
 // Autoplay holds (ms) before leaving a state that has no transition of its own.
@@ -39,37 +44,79 @@ const HOLD = { static: 600, drift: 2000, spun: 400 } as const;
 
 type Layout = { origin: Point; unit: number };
 
+type Parts = {
+  mesh?: MeshController;
+  logo?: LogoController;
+  /** The Logo's <svg>, for aligning the mesh. */
+  logoElement?: SVGSVGElement;
+  logoType?: LogoTypeController;
+};
+
+type IntroContext = {
+  parts: Parts;
+  layout: Accessor<Layout | undefined>;
+  drift: Accessor<Drift>;
+  setDrift: (drift: Drift) => void;
+  /** Re-measure the logo (call once its element is registered). */
+  measure: () => void;
+};
+
+const Context = createContext<IntroContext>();
+
+const useIntro = (part: string) => {
+  const context = useContext(Context);
+  if (!context) {
+    throw new Error(`LogoIntro.${part} must be inside LogoIntro.Root`);
+  }
+  return context;
+};
+
 const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
+/** @public */
+export type LogoIntroRootProps = ParentProps<{
+  class?: string;
+  /** Play on mount (default: true). */
+  autoplay?: boolean;
+  /** Receives the state controls once mounted. */
+  controller?: (controller: LogoIntroController) => void;
+}>;
+
 /**
- * Full-screen logo intro composed of two parts: the Mesh (a monochrome triangular tiling of the
- * whole plane) and the Logo (its six-segment hexagon, hidden at first). The mesh comes alive and
- * dims into the background; the hexagon then fades in over it and plays the Logo's own intro. The
- * Mesh is aligned by measuring where the Logo's closed hexagon lands.
+ * Full-screen logo intro. Composite: `Root` owns the state machine and alignment; `Mesh` is the
+ * monochrome tiling layer; `Content` is the layer that follows the mesh's drift; `Logo` and
+ * `LogoType` go inside it.
+ *
+ *   <LogoIntro.Root>
+ *     <LogoIntro.Mesh />
+ *     <LogoIntro.Content>
+ *       <LogoIntro.Logo />
+ *       <LogoIntro.LogoType />
+ *     </LogoIntro.Content>
+ *   </LogoIntro.Root>
  */
-export const LogoIntro = (props: LogoIntroProps) => {
+const Root = (props: LogoIntroRootProps) => {
   let container!: HTMLDivElement;
-  let logoBox!: HTMLDivElement;
-  let logo: LogoController | undefined;
-  let mesh: MeshController | undefined;
+  const parts: Parts = {};
   const [layout, setLayout] = createSignal<Layout>();
-  // The logo box follows the mesh's drift (same box, same transform about its centre), so the
-  // hexagon stays on the mesh's origin wherever it has drifted to.
   const [drift, setDrift] = createSignal<Drift>(NO_DRIFT);
 
   // Where the Logo's closed hexagon centre sits (px, relative to the undrifted container) and its
-  // px-per-unit. Measured rects are drifted, so divide out the current scale; the logo box fills the
-  // container, so offsets within it are offsets within the container.
+  // px-per-unit. Measured rects are drifted: q = c + s (p - c) + shift about the container centre c.
   const measure = () => {
-    const box = logoBox.getBoundingClientRect();
-    const svg = logoBox.querySelector('svg')!.getBoundingClientRect();
-    const { scale: s } = drift();
-    const scale = svg.width / s / LOGO_SIZE.width;
+    const svg = parts.logoElement;
+    if (!svg) {
+      return;
+    }
+    const box = container.getBoundingClientRect();
+    const rect = svg.getBoundingClientRect();
+    const { shift, scale: s } = drift();
+    const c = { x: box.width / 2, y: box.height / 2 };
+    const q = { x: rect.left - box.left, y: rect.top - box.top };
+    const p = { x: c.x + (q.x - c.x - shift.x) / s, y: c.y + (q.y - c.y - shift.y) / s };
+    const scale = rect.width / s / LOGO_SIZE.width;
     setLayout({
-      origin: {
-        x: (svg.left - box.left) / s + HEX_CENTER.x * scale,
-        y: (svg.top - box.top) / s + HEX_CENTER.y * scale,
-      },
+      origin: { x: p.x + HEX_CENTER.x * scale, y: p.y + HEX_CENTER.y * scale },
       unit: scale * CLOSED_SCALE,
     });
   };
@@ -80,21 +127,25 @@ export const LogoIntro = (props: LogoIntroProps) => {
   const reset = () => {
     run++;
     current = 'static';
-    mesh?.reset();
-    logo?.reset();
+    parts.mesh?.reset();
+    void parts.mesh?.set('static'); // Fades the mesh back in.
+    parts.logo?.reset();
+    parts.logoType?.reset();
   };
 
-  // Each state is owned by one part (both for `open`); the other keeps whatever state it is in.
+  // Each state is owned by one part (both mesh and logo for `open`); the others keep their state.
   const enter = (state: IntroState) => {
     switch (state) {
       case 'static':
       case 'drift':
       case 'faded':
-        return mesh?.set(state);
+        return parts.mesh?.set(state);
       case 'open':
-        return Promise.all([mesh?.set(state), logo?.set(state)]);
+        return Promise.all([parts.mesh?.set(state), parts.logo?.set(state)]);
+      case 'named':
+        return parts.logoType?.set('visible');
       default:
-        return logo?.set(state);
+        return parts.logo?.set(state);
     }
   };
 
@@ -145,25 +196,84 @@ export const LogoIntro = (props: LogoIntroProps) => {
   });
 
   return (
-    <div ref={container} class={props.class ?? 'relative h-full w-full overflow-hidden'}>
-      <Show when={layout()}>
-        {(l) => (
-          <Mesh
-            class='absolute inset-0 h-full w-full'
-            origin={l().origin}
-            unit={l().unit}
-            controller={(controller) => (mesh = controller)}
-            onDrift={setDrift}
-          />
-        )}
-      </Show>
-      <div
-        ref={logoBox}
-        class='relative flex h-full w-full origin-center items-center justify-center'
-        style={{ transform: `translate(${drift().shift.x}px, ${drift().shift.y}px) scale(${drift().scale})` }}
-      >
-        <Logo class='h-48 w-auto' animate='manual' controller={(controller) => (logo = controller)} />
+    <Context.Provider value={{ parts, layout, drift, setDrift, measure }}>
+      <div ref={container} class={props.class ?? 'relative h-full w-full overflow-hidden'}>
+        {props.children}
       </div>
+    </Context.Provider>
+  );
+};
+
+type LogoIntroMeshProps = {
+  class?: string;
+  /** See Mesh `levels`. */
+  levels?: number;
+};
+
+/** The tiling layer, aligned to the Logo's closed hexagon. */
+const IntroMesh = (props: LogoIntroMeshProps) => {
+  const { parts, layout, setDrift } = useIntro('Mesh');
+  return (
+    <Show when={layout()}>
+      {(l) => (
+        <Mesh
+          class={props.class ?? 'absolute inset-0 h-full w-full'}
+          origin={l().origin}
+          unit={l().unit}
+          levels={props.levels}
+          controller={(controller) => (parts.mesh = controller)}
+          onDrift={setDrift}
+        />
+      )}
+    </Show>
+  );
+};
+
+/** The layer that follows the mesh's drift; holds the Logo and LogoType, centred as a column. */
+const Content = (props: ParentProps<{ class?: string }>) => {
+  const { drift } = useIntro('Content');
+  return (
+    <div
+      class={props.class ?? 'absolute inset-0 flex origin-center flex-col items-center justify-center gap-8'}
+      style={{ transform: `translate(${drift().shift.x}px, ${drift().shift.y}px) scale(${drift().scale})` }}
+    >
+      {props.children}
     </div>
   );
+};
+
+type LogoIntroLogoProps = Omit<JSX.SvgSVGAttributes<SVGSVGElement>, 'children'>;
+
+/** The six-segment logo, driven by the Root. */
+const IntroLogo = (props: LogoIntroLogoProps) => {
+  const { parts, measure } = useIntro('Logo');
+  const [local, rest] = splitProps(props, ['class']);
+  return (
+    <Logo
+      ref={(element: SVGSVGElement) => {
+        parts.logoElement = element;
+        queueMicrotask(measure); // After layout.
+      }}
+      class={local.class ?? 'h-48 w-auto'}
+      animate='manual'
+      controller={(controller) => (parts.logo = controller)}
+      {...rest}
+    />
+  );
+};
+
+type LogoIntroLogoTypeProps = Omit<JSX.HTMLAttributes<HTMLDivElement>, 'children'>;
+
+/** The wordmark, shown once the logo has opened. */
+const IntroLogoType = (props: LogoIntroLogoTypeProps) => {
+  const { parts } = useIntro('LogoType');
+  return <LogoType animate='manual' controller={(controller) => (parts.logoType = controller)} {...props} />;
+};
+
+export const LogoIntro = {
+  Root,
+  Mesh: IntroMesh,
+  Content,
+  Logo: IntroLogo,
+  LogoType: IntroLogoType,
 };

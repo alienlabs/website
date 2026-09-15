@@ -1,13 +1,29 @@
 import { createSignal } from 'solid-js';
 import type { Meta, StoryObj } from 'storybook-solidjs-vite';
 
-import { INTRO_STATES, type IntroState, LogoIntro, type LogoIntroController } from './LogoIntro';
+import {
+  INTRO_STATES,
+  type IntroState,
+  LogoIntro,
+  type LogoIntroController,
+  type LogoIntroRootProps,
+} from './LogoIntro';
+
+const Intro = (props: LogoIntroRootProps) => (
+  <LogoIntro.Root {...props}>
+    <LogoIntro.Mesh />
+    <LogoIntro.Content>
+      <LogoIntro.Logo />
+      <LogoIntro.LogoType />
+    </LogoIntro.Content>
+  </LogoIntro.Root>
+);
 
 const meta = {
   title: 'Components/LogoIntro',
-  component: LogoIntro,
+  component: Intro,
   parameters: { layout: 'fullscreen' },
-} satisfies Meta<typeof LogoIntro>;
+} satisfies Meta<typeof Intro>;
 
 export default meta;
 
@@ -19,7 +35,7 @@ export const Default: Story = {
   },
 };
 
-/** Starts on the static mesh; Step advances through the six states (wrapping), Play runs them all. */
+/** Starts on the static mesh; Step advances through the states (wrapping), Play runs them all. */
 export const Manual: Story = {
   args: {
     ...Default.args,
@@ -67,7 +83,7 @@ export const Manual: Story = {
           </button>
           <span class='text-sm text-muted-foreground'>{state()}</span>
         </div>
-        <LogoIntro {...args} controller={(controller) => (intro = controller)} />
+        <Intro {...args} controller={(controller) => (intro = controller)} />
       </>
     );
   },
