@@ -104,6 +104,21 @@ export const I18nProvider = (props: I18nProviderProps) => {
   );
 };
 
+export type I18nInstanceProviderProps = ParentProps<{
+  /** Already-initialized instance (e.g. created once with a top-level `await createI18n(...)`). */
+  instance: I18n;
+  lng?: string;
+}>;
+
+/**
+ * Synchronous variant of {@link I18nProvider} for callers that already hold a resolved instance.
+ * Storybook decorators need this: `Story` never renders if it is nested behind the async
+ * `Show`/`createResource` that `I18nProvider` uses internally.
+ */
+export const I18nInstanceProvider = (props: I18nInstanceProviderProps) => (
+  <I18nContextInner instance={props.instance} lng={props.lng} children={props.children} />
+);
+
 const I18nContextInner = (props: ParentProps<{ instance: I18n; lng?: string }>) => {
   const value = createI18nContext(props.instance);
 
