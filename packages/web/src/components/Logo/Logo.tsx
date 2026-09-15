@@ -11,7 +11,7 @@ import {
 import type { JSX } from 'solid-js';
 import { createUniqueId, onCleanup, onMount, splitProps } from 'solid-js';
 
-import rustUrl from '../../../assets/images/rust.jpg?url';
+import textureUrl from '../../../assets/images/metal.jpg?url';
 import {
   BLUE,
   DEEP_BLUE,
@@ -87,9 +87,9 @@ const EXIT_Y = 3000; // Where the top-centre segment drops to when opening (well
 const SEGMENT_OPACITY = { up: 0.4, down: 0.7 } as const;
 const segmentOpacity = ({ up }: Shape) => (up ? SEGMENT_OPACITY.up : SEGMENT_OPACITY.down);
 
-// Texture: the segments are filled with a tiling of the rust image, tinted by a colour matrix
+// Texture: the segments are filled with a tiling of the metal image, tinted by a colour matrix
 // (luminance × tint colour × TEXTURE_GAIN) so the tint can fade from monochrome to blue.
-const TEXTURE_SIZE = { width: 1440, height: 1080 };
+const TEXTURE_SIZE = { width: 2000, height: 2667 }; // One tile spans the logo (3:4 image).
 const TEXTURE_GAIN = 1.6;
 const tintMatrix = (color: string) => {
   const { r, g, b } = rgb(color);
@@ -222,7 +222,7 @@ export const Logo = (props: LogoProps) => {
       .attr('width', TEXTURE_SIZE.width)
       .attr('height', TEXTURE_SIZE.height)
       .append('image')
-      .attr('href', rustUrl)
+      .attr('href', textureUrl)
       .attr('width', TEXTURE_SIZE.width)
       .attr('height', TEXTURE_SIZE.height)
       .attr('preserveAspectRatio', 'xMidYMid slice');
