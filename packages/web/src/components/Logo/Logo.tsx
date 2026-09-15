@@ -1,9 +1,20 @@
-import { type BaseType, type Selection, easeCubicInOut, easeLinear, interpolateNumber, select } from 'd3';
+import {
+  type BaseType,
+  type Selection,
+  easeCubicInOut,
+  easeLinear,
+  interpolateNumber,
+  interpolateRgb,
+  rgb,
+  select,
+} from 'd3';
 import type { JSX } from 'solid-js';
 import { createUniqueId, onCleanup, onMount, splitProps } from 'solid-js';
 
+import rustUrl from '../../../assets/images/rust.jpg?url';
 import {
   BLUE,
+  DEEP_BLUE,
   GRAY,
   INSET_HEIGHT,
   OPEN_GAP,
@@ -13,7 +24,6 @@ import {
   type Shape,
   SIDE,
   centroid,
-  opacityOf,
   tile,
   trianglePath,
 } from './geometry';
@@ -48,6 +58,8 @@ export type LogoProps = JSX.SvgSVGAttributes<SVGSVGElement> & {
   animate?: boolean | 'manual';
   /** Receives the state controls once mounted. */
   controller?: (controller: LogoController) => void;
+  /** Rotate (with motion blur) while growing in the `spun` state (default: false: it only grows). */
+  spin?: boolean;
 };
 
 /** The logo's viewBox. */
@@ -68,11 +80,29 @@ export const HEX_CENTER: Point = { x: CENTER_X, y: UP_BASE - INSET_HEIGHT / 3 };
 export const CLOSED_SCALE = 0.5;
 const EXIT_Y = 3000; // Where the top-centre segment drops to when opening (well off screen).
 
+/**
+ * All segments are translucent so the A shows through them (only the A is solid), alternating
+ * between two levels: up-pointing segments lighter, down-pointing ones denser.
+ */
+const SEGMENT_OPACITY = { up: 0.4, down: 0.7 } as const;
+const segmentOpacity = ({ up }: Shape) => (up ? SEGMENT_OPACITY.up : SEGMENT_OPACITY.down);
+
+// Texture: the segments are filled with a tiling of the rust image, tinted by a colour matrix
+// (luminance × tint colour × TEXTURE_GAIN) so the tint can fade from monochrome to blue.
+const TEXTURE_SIZE = { width: 1440, height: 1080 };
+const TEXTURE_GAIN = 1.6;
+const tintMatrix = (color: string) => {
+  const { r, g, b } = rgb(color);
+  const channels = [r, g, b].map((v) => (v / 255) * TEXTURE_GAIN);
+  const lum = [0.2126, 0.7152, 0.0722];
+  return [...channels.map((c) => [...lum.map((l) => l * c), 0, 0].join(' ')), '0 0 0 1 0'].join(' ');
+};
+
 const A_PATH = 'M855 75 H1155 L1660 900 H1390 L1005 271 L620 900 H350 Z';
 
 // Durations (ms): fade in (monochrome → blue); spin SPIN_TURNS times while growing from CLOSED_SCALE;
 // rest closed (autoplay only); open (segments spread, wings unfold); the A fades in.
-const PHASES = { fadeIn: 2000, spin: 2400, closed: 400, open: OPEN_MS, letter: 500 } as const;
+const PHASES = { fadeIn: 2000, spin: 2400, grow: 600, closed: 400, open: OPEN_MS, letter: 500 } as const;
 const SPIN_TURNS = 4;
 
 // Angular motion blur while spinning: ghost copies trail the hexagon by GHOST_LAG degrees each, with
@@ -157,20 +187,21 @@ const TRIANGLES: Triangle[] = [top(), wing(-1), down(-1), bottom(), down(1), win
 /**
  * Logo consists of five translucent rounded equilateral triangles as shown below.
  * Behind them sits the letter A (a crossbar-less Λ with a flat top), whose legs extend below the
- * triangles. The A uses `currentColor` so it follows the theme; the triangles are brand blue, with
- * the up-pointing ones translucent so the A shows through where they overlap.
+ * triangles, in a solid deep blue; the triangles are translucent brand blue (alternating between two
+ * levels) so the A shows through where they overlap.
  *
  *  /\ \  / /\ \  / /\
  * /  \ \/ /  \ \/ /  \
  *
  * Intro: the triangles start as the six segments of a closed, monochrome hexagon at half scale;
- * they turn blue, then (1) spin about its centre while growing, (2) rest closed, then (3) open: the top-centre segment drops away,
+ * they turn blue, then (1) grow to full size (spinning about the centre if `spin`), (2) rest closed,
+ * then (3) open: the top-centre segment drops away,
  * the rest spread apart and lift while the wings unfold about the hexagon's outer corners into the
  * row, and the A fades in. Layout and animation are driven by d3. See Mesh for the
  * matching full-screen tiling the closed hexagon can emerge from.
  */
 export const Logo = (props: LogoProps) => {
-  const [local, rest] = splitProps(props, ['class', 'animate', 'controller']);
+  const [local, rest] = splitProps(props, ['class', 'animate', 'controller', 'spin']);
   let ref!: SVGSVGElement;
 
   onMount(() => {
@@ -178,14 +209,31 @@ export const Logo = (props: LogoProps) => {
     const animate = reduced ? false : (local.animate ?? true);
 
     const svg = select(ref);
-    const blurId = `${createUniqueId()}-blur`;
-    const blur = svg
-      .append('defs')
+    const id = createUniqueId();
+    const blurId = `${id}-blur`;
+    const textureId = `${id}-texture`;
+    const tintId = `${id}-tint`;
+    const defs = svg.append('defs');
+    const blur = defs.append('filter').attr('id', blurId).append('feGaussianBlur').attr('stdDeviation', 0);
+    defs
+      .append('pattern')
+      .attr('id', textureId)
+      .attr('patternUnits', 'userSpaceOnUse')
+      .attr('width', TEXTURE_SIZE.width)
+      .attr('height', TEXTURE_SIZE.height)
+      .append('image')
+      .attr('href', rustUrl)
+      .attr('width', TEXTURE_SIZE.width)
+      .attr('height', TEXTURE_SIZE.height)
+      .attr('preserveAspectRatio', 'xMidYMid slice');
+    const tint = defs
       .append('filter')
-      .attr('id', blurId)
-      .append('feGaussianBlur')
-      .attr('stdDeviation', 0);
-    const letter = svg.append('path').attr('d', A_PATH).attr('fill', 'currentColor');
+      .attr('id', tintId)
+      .attr('color-interpolation-filters', 'sRGB')
+      .append('feColorMatrix')
+      .attr('type', 'matrix')
+      .attr('values', tintMatrix(GRAY));
+    const letter = svg.append('path').attr('d', A_PATH).attr('fill', DEEP_BLUE);
 
     // Ghost copies lag the hexagon while it spins (angular motion blur); the real one is on top.
     const spinner = svg.append('g');
@@ -199,7 +247,7 @@ export const Logo = (props: LogoProps) => {
         .data(TRIANGLES)
         .join('path')
         .attr('d', trianglePath)
-        .attr('opacity', opacityOf);
+        .attr('opacity', segmentOpacity);
     const ghosts = spinner
       .selectAll('g.ghost')
       .data(GHOST_OPACITY)
@@ -209,8 +257,9 @@ export const Logo = (props: LogoProps) => {
       .each(function () {
         segments(select(this)).attr('transform', (d) => transformAt(d, 0));
       });
-    const hex = spinner.append('g');
-    const triangles = segments(hex);
+    // The real hexagon is textured and tinted; the ghosts stay flat blue.
+    const hex = spinner.append('g').attr('filter', `url(#${tintId})`);
+    const triangles = segments(hex).attr('fill', `url(#${textureId})`).attr('stroke', `url(#${textureId})`);
     // The closed hexagon extends below the final bounding box.
     ref.style.overflow = 'visible';
 
@@ -219,16 +268,31 @@ export const Logo = (props: LogoProps) => {
       `translate(${HEX_CENTER.x} ${HEX_CENTER.y}) rotate(${angle}) scale(${scale}) translate(${-HEX_CENTER.x} ${-HEX_CENTER.y})`;
     // Spin angle and normalised angular speed (0..1) at raw time t; easing is applied here so the
     // speed is known to the ghosts and the blur.
-    const spinAngle = (t: number) => -360 * SPIN_TURNS * (1 - easeCubicInOut(t));
+    const spinAngle = (t: number) => (local.spin ? -360 * SPIN_TURNS * (1 - easeCubicInOut(t)) : 0);
     const spinSpeed = (t: number) => (t < 0.5 ? 12 * t * t : 12 * (1 - t) ** 2) / 3;
     const spinScale = (t: number) => CLOSED_SCALE + (1 - CLOSED_SCALE) * easeCubicInOut(t);
 
     // Transition into each state from the previous one. Each resolves when done (or rejects if
     // interrupted, which `set` swallows).
     const steps: Record<Exclude<LogoState, 'hidden'>, () => Promise<unknown>> = {
-      visible: () =>
-        hex.transition().duration(PHASES.fadeIn).attr('opacity', 1).attr('fill', BLUE).attr('stroke', BLUE).end(),
+      visible: () => {
+        const color = interpolateRgb(GRAY, BLUE);
+        tint
+          .transition()
+          .duration(PHASES.fadeIn)
+          .attrTween('values', () => (t) => tintMatrix(color(t)));
+        return hex.transition().duration(PHASES.fadeIn).attr('opacity', 1).end();
+      },
       spun: () => {
+        if (!local.spin) {
+          return hex
+            .transition()
+            .duration(PHASES.grow)
+            .ease(easeLinear)
+            .attrTween('transform', () => (t) => spinTransform(0, spinScale(t)))
+            .on('end', () => hex.attr('transform', null))
+            .end();
+        }
         spinner.attr('filter', `url(#${blurId})`);
         blur
           .transition()
@@ -266,8 +330,8 @@ export const Logo = (props: LogoProps) => {
           .ease(easeCubicInOut)
           .attrTween('transform', (d) => (t) => transformAt(d, t))
           .attrTween('opacity', (d) => {
-            const fade = interpolateNumber(opacityOf(d), 0);
-            return (t) => String(d.exit ? fade(t) : opacityOf(d));
+            const fade = interpolateNumber(segmentOpacity(d), 0);
+            return (t) => String(d.exit ? fade(t) : segmentOpacity(d));
           })
           .on('end', function (d) {
             select(this).attr(d.exit ? 'visibility' : 'transform', d.exit ? 'hidden' : null);
@@ -290,14 +354,11 @@ export const Logo = (props: LogoProps) => {
         .attr('display', null)
         .attr('opacity', 0)
         .attr('transform', spinTransform(spinAngle(0), spinScale(0)));
-      hex
-        .attr('opacity', 0)
-        .attr('fill', GRAY)
-        .attr('stroke', GRAY)
-        .attr('transform', spinTransform(spinAngle(0), spinScale(0)));
+      tint.interrupt().attr('values', tintMatrix(GRAY));
+      hex.attr('opacity', 0).attr('transform', spinTransform(spinAngle(0), spinScale(0)));
       triangles
         .attr('transform', (d) => transformAt(d, 0))
-        .attr('opacity', opacityOf)
+        .attr('opacity', segmentOpacity)
         .attr('visibility', null);
     };
 
@@ -337,6 +398,7 @@ export const Logo = (props: LogoProps) => {
 
     if (animate === false) {
       current = 'open';
+      tint.attr('values', tintMatrix(BLUE));
       letter.attr('opacity', 1);
       ghosts.attr('display', 'none');
       triangles.filter((d) => d.exit !== undefined).attr('visibility', 'hidden');

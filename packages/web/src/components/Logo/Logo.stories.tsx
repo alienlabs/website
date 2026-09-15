@@ -22,6 +22,13 @@ export const Large: Story = {
   },
 };
 
+export const Spin: Story = {
+  args: {
+    spin: true,
+    class: 'mb-24 h-48 w-auto',
+  },
+};
+
 export const Static: Story = {
   args: {
     animate: false,

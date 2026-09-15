@@ -10,15 +10,18 @@
     "./fonts.css": "./assets/fonts/fonts.css",
     "./i18n": "./src/i18n/index.ts",
     "./testing": "./src/testing/index.ts",
-    "./theme": "./src/theme/index.ts"
+    "./theme": "./src/theme/index.ts",
+    "./utils": "./src/utils/index.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "clsx": "catalog:",
     "i18next": "catalog:",
     "i18next-browser-languagedetector": "catalog:",
-    "i18next-resources-to-backend": "catalog:"
+    "i18next-resources-to-backend": "catalog:",
+    "tailwind-merge": "catalog:"
   },
   "devDependencies": {
     "typescript": "catalog:"

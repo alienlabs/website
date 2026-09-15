@@ -12,7 +12,7 @@ export const LocaleSelect = () => {
 
   return (
     <select
-      class='rounded-md border border-border bg-background px-2 py-1 text-sm text-muted-foreground'
+      class='rounded-md border border-border bg-transparent px-2 py-1 text-sm text-muted-foreground'
       aria-label={t('locale.label')}
       value={language()}
       onChange={(event) => void changeLanguage(event.currentTarget.value)}

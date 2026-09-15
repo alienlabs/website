@@ -10,6 +10,8 @@ export type Shape = {
 };
 
 export const BLUE = '#4a9fda';
+/** Deep blue of the letter A (the third shade, next to BLUE and the translucent tiles). */
+export const DEEP_BLUE = '#0f3556';
 /** Monochrome tint of the mesh and of the Logo before it comes alive. */
 export const GRAY = '#a3a3a3';
 

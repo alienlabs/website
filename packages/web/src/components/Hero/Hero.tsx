@@ -15,7 +15,7 @@ import { CLOSED_SCALE, HEX_CENTER, Logo, LOGO_SIZE, type LogoController } from '
 import { type Point } from '../Logo/geometry';
 import { LogoType, type LogoTypeController } from '../LogoType';
 import { type Drift, Mesh, type MeshController, NO_DRIFT } from '../Mesh';
-import { createAmbience } from './sound';
+import { createAirlock, createAmbience } from './sound';
 
 /**
  * Hero states, in order: the Mesh fades in and rests; drifts; dims; the Logo fades in; spins;
@@ -34,7 +34,7 @@ export type HeroController = {
   set: (state: HeroState) => Promise<void>;
   /** Advance to the next state (wrapping round to the start). */
   step: () => Promise<void>;
-  /** Run the whole intro from the start; resolves when done. */
+  /** Run the whole intro from the start (resetting first unless already at the start); resolves when done. */
   play: () => Promise<void>;
   /** Interrupt and return to the start state. */
   reset: () => void;
@@ -72,6 +72,8 @@ const useHero = (part: string) => {
   return context;
 };
 
+const atRest = ({ shift, scale, rotate }: Drift) => shift.x === 0 && shift.y === 0 && scale === 1 && rotate === 0;
+
 const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
 /** @public */
@@ -79,7 +81,7 @@ export type HeroRootProps = ParentProps<{
   class?: string;
   /** Play on mount (default: true). */
   autoplay?: boolean;
-  /** Play the ambience while the mesh drifts (default: true; browsers may refuse until a gesture). */
+  /** Play sounds — ambience while the mesh drifts, an airlock as the logo opens (default: true; browsers may refuse until a gesture). */
   sound?: boolean;
   /** Receives the state controls once mounted. */
   controller?: (controller: HeroController) => void;
@@ -105,19 +107,17 @@ const Root = (props: HeroRootProps) => {
   const [drift, setDrift] = createSignal<Drift>(NO_DRIFT);
 
   // Where the Logo's closed hexagon centre sits (px, relative to the undrifted container) and its
-  // px-per-unit. Measured rects are drifted: q = c + s (p - c) + shift about the container centre c.
+  // px-per-unit. Measured only while undrifted (drift is a rigid transform about the container
+  // centre, so re-measuring during drift would need the inverse; resizes reset the intro anyway).
   const measure = () => {
     const svg = parts.logoElement;
-    if (!svg) {
+    if (!svg || !atRest(drift())) {
       return;
     }
     const box = container.getBoundingClientRect();
     const rect = svg.getBoundingClientRect();
-    const { shift, scale: s } = drift();
-    const c = { x: box.width / 2, y: box.height / 2 };
-    const q = { x: rect.left - box.left, y: rect.top - box.top };
-    const p = { x: c.x + (q.x - c.x - shift.x) / s, y: c.y + (q.y - c.y - shift.y) / s };
-    const scale = rect.width / s / LOGO_SIZE.width;
+    const p = { x: rect.left - box.left, y: rect.top - box.top };
+    const scale = rect.width / LOGO_SIZE.width;
     setLayout({
       origin: { x: p.x + HEX_CENTER.x * scale, y: p.y + HEX_CENTER.y * scale },
       unit: scale * CLOSED_SCALE,
@@ -127,12 +127,17 @@ const Root = (props: HeroRootProps) => {
   let current: HeroState = 'static';
   let run = 0; // Incremented by reset/set so a superseded run stops stepping.
   const ambience = createAmbience();
-  onCleanup(() => ambience.stop());
+  const airlock = createAirlock();
+  onCleanup(() => {
+    ambience.stop(true);
+    airlock.stop(true);
+  });
 
   const reset = () => {
     run++;
     current = 'static';
     ambience.stop();
+    airlock.stop(true);
     parts.mesh?.reset();
     void parts.mesh?.set('static'); // Fades the mesh back in.
     parts.logo?.reset();
@@ -151,6 +156,9 @@ const Root = (props: HeroRootProps) => {
       case 'faded':
         return parts.mesh?.set(state);
       case 'open':
+        if (props.sound ?? true) {
+          airlock.play();
+        }
         return Promise.all([parts.mesh?.set(state), parts.logo?.set(state)]);
       case 'named':
         return parts.logoType?.set('visible');
@@ -178,7 +186,10 @@ const Root = (props: HeroRootProps) => {
   const step = () => set(HERO_STATES[(HERO_STATES.indexOf(current) + 1) % HERO_STATES.length]!);
 
   const play = async () => {
-    reset();
+    // Start from where we are if that is the start state (no jump back through the mesh fade-in).
+    if (current !== 'static') {
+      reset();
+    }
     for (const state of HERO_STATES) {
       const id = run;
       if (state !== 'static') {
@@ -196,7 +207,14 @@ const Root = (props: HeroRootProps) => {
 
   onMount(() => {
     measure();
-    const observer = new ResizeObserver(measure);
+    const observer = new ResizeObserver(() => {
+      // Layout changed under a running intro: start over from an undrifted, measurable state.
+      if (!atRest(drift())) {
+        reset();
+        setDrift(NO_DRIFT);
+      }
+      measure();
+    });
     observer.observe(container);
     onCleanup(() => observer.disconnect());
     props.controller?.({ state: () => current, set, step, play, reset });
@@ -218,6 +236,8 @@ type HeroMeshProps = {
   class?: string;
   /** See Mesh `levels`. */
   levels?: number;
+  /** See Mesh `rotate` (default: true). */
+  rotate?: boolean;
 };
 
 /** The tiling layer, aligned to the Logo's closed hexagon. */
@@ -231,6 +251,7 @@ const HeroMesh = (props: HeroMeshProps) => {
           origin={l().origin}
           unit={l().unit}
           levels={props.levels}
+          rotate={props.rotate}
           controller={(controller) => (parts.mesh = controller)}
           onDrift={setDrift}
         />
@@ -245,21 +266,27 @@ const Content = (props: ParentProps<{ class?: string }>) => {
   return (
     <div
       class={props.class ?? 'absolute inset-0 flex origin-center flex-col items-center justify-center gap-8'}
-      style={{ transform: `translate(${drift().shift.x}px, ${drift().shift.y}px) scale(${drift().scale})` }}
+      style={{
+        transform: `translate(${drift().shift.x}px, ${drift().shift.y}px) rotate(${drift().rotate}deg) scale(${drift().scale})`,
+      }}
     >
       {props.children}
     </div>
   );
 };
 
-type HeroLogoProps = Omit<JSX.SvgSVGAttributes<SVGSVGElement>, 'children'>;
+type HeroLogoProps = Omit<JSX.SvgSVGAttributes<SVGSVGElement>, 'children'> & {
+  /** See Logo `spin` (default: false). */
+  spin?: boolean;
+};
 
 /** The six-segment logo, driven by the Root. */
 const HeroLogo = (props: HeroLogoProps) => {
   const { parts, measure } = useHero('Logo');
-  const [local, rest] = splitProps(props, ['class']);
+  const [local, rest] = splitProps(props, ['class', 'spin']);
   return (
     <Logo
+      spin={local.spin}
       ref={(element: SVGSVGElement) => {
         parts.logoElement = element;
         queueMicrotask(measure); // After layout.
