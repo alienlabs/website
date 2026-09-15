@@ -78,6 +78,8 @@ export const LogoType = (props: LogoTypeProps) => {
 
   return (
     <div ref={ref} class={`font-display text-4xl tracking-[0.3em] select-none ${local.class ?? ''}`} {...rest}>
+      {/* Brand name, not translated. */}
+      {/* i18next-instrument-ignore-next-line */}
       ALIEN LABS
     </div>
   );

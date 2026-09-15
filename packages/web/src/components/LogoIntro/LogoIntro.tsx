@@ -15,6 +15,7 @@ import { CLOSED_SCALE, HEX_CENTER, Logo, LOGO_SIZE, type LogoController } from '
 import { type Point } from '../Logo/geometry';
 import { LogoType, type LogoTypeController } from '../LogoType';
 import { type Drift, Mesh, type MeshController, NO_DRIFT } from '../Mesh';
+import { createAmbience } from './sound';
 
 /**
  * Intro states, in order: the Mesh fades in and rests; drifts; dims; the Logo fades in; spins;
@@ -78,6 +79,8 @@ export type LogoIntroRootProps = ParentProps<{
   class?: string;
   /** Play on mount (default: true). */
   autoplay?: boolean;
+  /** Play the ambience while the mesh drifts (default: true; browsers may refuse until a gesture). */
+  sound?: boolean;
   /** Receives the state controls once mounted. */
   controller?: (controller: LogoIntroController) => void;
 }>;
@@ -123,10 +126,13 @@ const Root = (props: LogoIntroRootProps) => {
 
   let current: IntroState = 'static';
   let run = 0; // Incremented by reset/set so a superseded run stops stepping.
+  const ambience = createAmbience();
+  onCleanup(() => ambience.stop());
 
   const reset = () => {
     run++;
     current = 'static';
+    ambience.stop();
     parts.mesh?.reset();
     void parts.mesh?.set('static'); // Fades the mesh back in.
     parts.logo?.reset();
@@ -136,8 +142,12 @@ const Root = (props: LogoIntroRootProps) => {
   // Each state is owned by one part (both mesh and logo for `open`); the others keep their state.
   const enter = (state: IntroState) => {
     switch (state) {
-      case 'static':
       case 'drift':
+        if (props.sound ?? true) {
+          ambience.play();
+        }
+        return parts.mesh?.set(state);
+      case 'static':
       case 'faded':
         return parts.mesh?.set(state);
       case 'open':
