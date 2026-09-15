@@ -2,6 +2,7 @@ import {
   type BaseType,
   type Selection,
   easeCubicInOut,
+  easeCubicOut,
   easeLinear,
   interpolateNumber,
   interpolateRgb,
@@ -104,6 +105,30 @@ const A_PATH = 'M855 75 H1155 L1660 900 H1390 L1005 271 L620 900 H350 Z';
 // rest closed (autoplay only); open (segments spread, wings unfold); the A fades in.
 const PHASES = { fadeIn: 2000, spin: 2400, grow: 600, closed: 400, open: OPEN_MS, letter: 500 } as const;
 const SPIN_TURNS = 4;
+// Without `spin`, the hexagon winds up one way as it starts to grow, then snaps back past centre
+// and settles with a damped recoil.
+const WIND_DEG = -20; // Wind-up angle (negative: anticlockwise).
+const WIND_PORTION = 0.35; // Fraction of the grow phase spent winding up.
+const RECOIL_CYCLES = 1.5; // Oscillations during the snap-back.
+const RECOIL_DAMPING = 4;
+// The gaps between segments spring open with the snap-back: each segment shrinks about its centroid
+// to SPREAD_SCALE (with the same overshoot), and grows back to full size as the logo opens.
+const SPREAD_SCALE = 0.92;
+const spreadAt = (t: number) => {
+  if (t < WIND_PORTION) {
+    return 1;
+  }
+  const u = (t - WIND_PORTION) / (1 - WIND_PORTION);
+  const spring = 1 - Math.exp(-RECOIL_DAMPING * u) * Math.cos(u * RECOIL_CYCLES * 2 * Math.PI);
+  return 1 - (1 - SPREAD_SCALE) * spring;
+};
+const shudder = (t: number) => {
+  if (t < WIND_PORTION) {
+    return WIND_DEG * easeCubicOut(t / WIND_PORTION);
+  }
+  const u = (t - WIND_PORTION) / (1 - WIND_PORTION);
+  return WIND_DEG * Math.exp(-RECOIL_DAMPING * u) * Math.cos(u * RECOIL_CYCLES * 2 * Math.PI);
+};
 
 // Angular motion blur while spinning: ghost copies trail the hexagon by GHOST_LAG degrees each, with
 // lag and opacity scaled by angular speed, and a Gaussian blur peaks with speed. All vanish as the
@@ -122,7 +147,12 @@ type Triangle = Shape & {
 };
 
 /** Transform placing a segment at fraction `t` of the way from closed (0) to final (1). */
-const transformAt = ({ offset, fold, exit }: Triangle, t: number) => {
+/**
+ * Transform placing a segment at fraction `t` of the way from closed (0) to final (1), shrunk about
+ * its own centroid by `spread` (1 = full size; less widens the gaps).
+ */
+const transformAt = (segment: Triangle, t: number, spread = 1) => {
+  const { offset, fold, exit } = segment;
   // Exits fall away, accelerating (t² on top of the transition's easing).
   const fly = exit ? t * t : 0;
   const parts = [
@@ -130,6 +160,10 @@ const transformAt = ({ offset, fold, exit }: Triangle, t: number) => {
   ];
   if (fold) {
     parts.push(`rotate(${-fold.sweep * (1 - t)} ${fold.pivot.x} ${fold.pivot.y})`);
+  }
+  if (spread !== 1) {
+    const { x, y } = centroid(segment);
+    parts.push(`translate(${x} ${y}) scale(${spread}) translate(${-x} ${-y})`);
   }
   return parts.join(' ');
 };
@@ -194,7 +228,9 @@ const TRIANGLES: Triangle[] = [top(), wing(-1), down(-1), bottom(), down(1), win
  * /  \ \/ /  \ \/ /  \
  *
  * Intro: the triangles start as the six segments of a closed, monochrome hexagon at half scale;
- * they turn blue, then (1) grow to full size (spinning about the centre if `spin`), (2) rest closed,
+ * they turn blue, then (1) grow to full size (winding up and snapping back with a recoil, or spinning
+ * about the centre if `spin`),
+ * (2) rest closed,
  * then (3) open: the top-centre segment drops away,
  * the rest spread apart and lift while the wings unfold about the hexagon's outer corners into the
  * row, and the A fades in. Layout and animation are driven by d3. See Mesh for the
@@ -285,11 +321,16 @@ export const Logo = (props: LogoProps) => {
       },
       spun: () => {
         if (!local.spin) {
+          triangles
+            .transition()
+            .duration(PHASES.grow)
+            .ease(easeLinear)
+            .attrTween('transform', (d) => (t) => transformAt(d, 0, spreadAt(t)));
           return hex
             .transition()
             .duration(PHASES.grow)
             .ease(easeLinear)
-            .attrTween('transform', () => (t) => spinTransform(0, spinScale(t)))
+            .attrTween('transform', () => (t) => spinTransform(shudder(t), spinScale(t)))
             .on('end', () => hex.attr('transform', null))
             .end();
         }
@@ -328,7 +369,10 @@ export const Logo = (props: LogoProps) => {
           .transition()
           .duration(PHASES.open)
           .ease(easeCubicInOut)
-          .attrTween('transform', (d) => (t) => transformAt(d, t))
+          .attrTween(
+            'transform',
+            (d) => (t) => transformAt(d, t, local.spin ? 1 : SPREAD_SCALE + (1 - SPREAD_SCALE) * t),
+          )
           .attrTween('opacity', (d) => {
             const fade = interpolateNumber(segmentOpacity(d), 0);
             return (t) => String(d.exit ? fade(t) : segmentOpacity(d));
