@@ -1,7 +1,7 @@
 import { I18nProvider } from '@richburdon/ui-core/i18n';
 import { ThemeProvider } from '@richburdon/ui-core/theme';
 
-import { Hello, LocaleSelect, ThemeToggle } from './components';
+import { Hello, LocaleSelect, QRTest, ThemeToggle } from './components';
 import { i18nOptions } from './i18n';
 
 export const App = () => {
@@ -14,7 +14,10 @@ export const App = () => {
             <ThemeToggle />
           </header>
           <div class='flex flex-1 items-center justify-center'>
-            <Hello name='World' />
+            <Hello name='ALIEN' />
+          </div>
+          <div class='flex flex-1 items-center justify-center'>
+            <QRTest link='https://www.youtube.com/watch?v=hvL1339luv0' />
           </div>
         </main>
       </I18nProvider>
