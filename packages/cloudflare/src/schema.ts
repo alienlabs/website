@@ -1,12 +1,25 @@
 import { Schema } from 'effect';
 
+export const ApiError = Schema.Struct({ code: Schema.Number, message: Schema.String });
+
 /** Every Cloudflare v4 response is wrapped in this envelope. */
 export const Envelope = <A, I, R>(result: Schema.Schema<A, I, R>) =>
   Schema.Struct({
-    success: Schema.Boolean,
-    errors: Schema.Array(Schema.Struct({ code: Schema.Number, message: Schema.String })),
-    result: Schema.NullOr(result),
+    success: Schema.Literal(true),
+    errors: Schema.Array(ApiError),
+    result,
   });
+
+/** A failed request: same envelope, `success: false`, errors populated (the API sends no `_tag`). */
+export class ErrorEnvelope extends Schema.Class<ErrorEnvelope>('ErrorEnvelope')({
+  success: Schema.Literal(false),
+  errors: Schema.Array(ApiError),
+  result: Schema.NullOr(Schema.Unknown),
+}) {
+  get message() {
+    return this.errors.map(({ code, message }) => `${code}: ${message}`).join('; ');
+  }
+}
 
 export const Account = Schema.Struct({ id: Schema.String, name: Schema.String });
 export type Account = typeof Account.Type;

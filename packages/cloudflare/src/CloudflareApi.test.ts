@@ -2,7 +2,8 @@ import { HttpClient, HttpClientResponse, UrlParams } from '@effect/platform';
 import { Effect, Layer, Redacted } from 'effect';
 import { describe, expect, it } from 'vitest';
 
-import { CloudflareApi, type CloudflareAuth, CloudflareError, layer } from './CloudflareApi';
+import { Cloudflare, type CloudflareAuth, result } from './CloudflareApi';
+import { ErrorEnvelope } from './schema';
 
 /** A fake HttpClient answering from a route table; records the requests it sees. */
 const fakeClient = (routes: Record<string, unknown>) => {
@@ -15,14 +16,17 @@ const fakeClient = (routes: Record<string, unknown>) => {
       const body =
         request.body._tag === 'Uint8Array' ? JSON.parse(new TextDecoder().decode(request.body.body)) : undefined;
       seen.push({ method: request.method, url: request.url, headers: request.headers, body });
-      const result = routes[key];
+      const hit = routes[key];
       const payload =
-        result === undefined
+        hit === undefined
           ? { success: false, errors: [{ code: 7003, message: 'no route' }], result: null }
-          : { success: true, errors: [], result };
+          : { success: true, errors: [], result: hit };
       return HttpClientResponse.fromWeb(
         request,
-        new Response(JSON.stringify(payload), { headers: { 'content-type': 'application/json' } }),
+        new Response(JSON.stringify(payload), {
+          status: hit === undefined ? 404 : 200,
+          headers: { 'content-type': 'application/json' },
+        }),
       );
     }),
   );
@@ -30,32 +34,32 @@ const fakeClient = (routes: Record<string, unknown>) => {
 };
 
 const run = <A, E>(
-  effect: Effect.Effect<A, E, CloudflareApi>,
+  effect: Effect.Effect<A, E, Cloudflare>,
   routes: Record<string, unknown>,
   auth: CloudflareAuth = { token: Redacted.make('t0k3n') },
 ) => {
   const fake = fakeClient(routes);
-  const api = layer(auth).pipe(Layer.provide(fake.layer));
-  return { seen: fake.seen, result: Effect.runPromise(effect.pipe(Effect.provide(api))) };
+  const layer = Cloudflare.layer(auth).pipe(Layer.provide(fake.layer));
+  return { seen: fake.seen, result: Effect.runPromise(effect.pipe(Effect.provide(layer))) };
 };
 
-describe('CloudflareApi', () => {
+describe('Cloudflare', () => {
   it('lists accounts with a bearer token', async () => {
-    const { seen, result } = run(
-      Effect.flatMap(CloudflareApi, (api) => api.accounts()),
+    const { seen, result: accounts } = run(
+      Effect.flatMap(Cloudflare, (cf) => result(cf.accounts.list())),
       { 'GET /client/v4/accounts': [{ id: 'a1', name: 'Alien Labs' }] },
     );
-    expect(await result).toEqual([{ id: 'a1', name: 'Alien Labs' }]);
+    expect(await accounts).toEqual([{ id: 'a1', name: 'Alien Labs' }]);
     expect(seen[0]?.headers['authorization']).toBe('Bearer t0k3n');
   });
 
   it('uses key + email auth and query params', async () => {
-    const { seen, result } = run(
-      Effect.flatMap(CloudflareApi, (api) => api.zones('a1')),
+    const { seen, result: zones } = run(
+      Effect.flatMap(Cloudflare, (cf) => result(cf.zones.list({ urlParams: { 'account.id': 'a1' } }))),
       { 'GET /client/v4/zones?account.id=a1': [{ id: 'z1', name: 'alienlabs.io', status: 'active' }] },
       { key: Redacted.make('k3y'), email: 'rich@alienlabs.io' },
     );
-    expect((await result).map((zone) => zone.name)).toEqual(['alienlabs.io']);
+    expect((await zones).map((zone) => zone.name)).toEqual(['alienlabs.io']);
     expect(seen[0]?.headers['x-auth-key']).toBe('k3y');
     expect(seen[0]?.headers['x-auth-email']).toBe('rich@alienlabs.io');
   });
@@ -70,22 +74,30 @@ describe('CloudflareApi', () => {
       branch_includes: ['*'],
       branch_excludes: ['production'],
     };
-    const { seen, result } = run(
-      Effect.flatMap(CloudflareApi, (api) => api.updateBuildTrigger('a1', 't1', { build_command: 'pnpm build' })),
+    const { seen, result: updated } = run(
+      Effect.flatMap(Cloudflare, (cf) =>
+        result(
+          cf.builds.updateTrigger({
+            path: { accountId: 'a1', triggerId: 't1' },
+            payload: { build_command: 'pnpm build' },
+          }),
+        ),
+      ),
       { 'PATCH /client/v4/accounts/a1/builds/triggers/t1': trigger },
     );
-    expect((await result).build_command).toBe('pnpm build');
+    expect((await updated).build_command).toBe('pnpm build');
     expect(seen[0]?.body).toEqual({ build_command: 'pnpm build' });
   });
 
-  it('fails with CloudflareError on an unsuccessful envelope', async () => {
+  it('fails with the error envelope on a 4xx response', async () => {
+    const fake = fakeClient({});
     const error = await Effect.runPromise(
-      Effect.flatMap(CloudflareApi, (api) => api.accounts()).pipe(
+      Effect.flatMap(Cloudflare, (cf) => cf.accounts.list()).pipe(
         Effect.flip,
-        Effect.provide(layer({ token: Redacted.make('x') }).pipe(Layer.provide(fakeClient({}).layer))),
+        Effect.provide(Cloudflare.layer({ token: Redacted.make('x') }).pipe(Layer.provide(fake.layer))),
       ),
     );
-    expect(error).toBeInstanceOf(CloudflareError);
-    expect((error as CloudflareError).errors[0]?.code).toBe(7003);
+    expect(error).toBeInstanceOf(ErrorEnvelope);
+    expect((error as ErrorEnvelope).errors[0]?.code).toBe(7003);
   });
 });
