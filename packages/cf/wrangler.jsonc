@@ -4,6 +4,12 @@
   "main": "src/index.ts",
   "compatibility_date": "2026-09-15",
   "account_id": "96951f7c7cb11abdb9281c9efe7be54f",
+  "kv_namespaces": [
+    {
+      "binding": "TASKS",
+      "id": "ce0c52fce02b4ef280c1cb728b4a86f3",
+    },
+  ],
   "observability": {
     "logs": {
       "enabled": true,

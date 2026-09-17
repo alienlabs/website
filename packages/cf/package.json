@@ -10,6 +10,9 @@
     "test": "vitest run",
     "typecheck": "tsc --noEmit"
   },
+  "dependencies": {
+    "uuid": "catalog:"
+  },
   "devDependencies": {
     "@cloudflare/workers-types": "catalog:",
     "typescript": "catalog:",
