@@ -23,6 +23,7 @@
 
 - [ark-ui](https://ark-ui.com/docs/components) — Headless, accessible component primitives (e.g. Tooltip) used by the app.
 - [babylonjs](https://www.babylonjs.com) — 3D rendering and animation library.
+- [codemirror](https://codemirror.net/) — Text editor.
 - [d3](https://d3js.org/what-is-d3) — Functional data visualization library.
 - [lit](https://lit.dev) — Simple, fast web components.
 - [motion](https://motion.dev/docs/quick-start) — Animation library.
