@@ -11,7 +11,7 @@
     "customGroups": [
       {
         "groupName": "workspace",
-        "elementNamePattern": ["@richburdon/**"]
+        "elementNamePattern": ["@alienlabs/**"]
       }
     ],
     "newlinesBetween": true,

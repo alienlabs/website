@@ -1,5 +1,5 @@
-import { useI18n } from '@richburdon/ui-core/i18n';
-import { useTheme } from '@richburdon/ui-core/theme';
+import { useI18n } from '@alienlabs/ui-core/i18n';
+import { useTheme } from '@alienlabs/ui-core/theme';
 
 // Dynamic keys, declared for `i18next-cli extract`:
 // t('theme.light')

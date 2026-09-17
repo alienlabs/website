@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from 'storybook-solidjs-vite';
 
-import { createI18n } from '@richburdon/ui-core/i18n';
-import { createStorybookDecorator } from '@richburdon/ui-core/testing';
+import { createI18n } from '@alienlabs/ui-core/i18n';
+import { createStorybookDecorator } from '@alienlabs/ui-core/testing';
 
 import { i18nOptions } from '../../i18n';
 import { Hello } from './Hello';

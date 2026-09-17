@@ -3,7 +3,7 @@ import { Effect } from 'effect';
 import type { TFunction } from 'i18next';
 import { createSignal } from 'solid-js';
 
-import { useI18n } from '@richburdon/ui-core/i18n';
+import { useI18n } from '@alienlabs/ui-core/i18n';
 
 const greet = (t: TFunction, name: string) => Effect.sync(() => t('hello.greeting', { name }));
 

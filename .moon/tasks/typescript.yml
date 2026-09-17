@@ -12,7 +12,7 @@ fileGroups:
 
 tasks:
   typecheck:
-    command: 'tsc --noEmit'
+    command: 'pnpm exec tsc --noEmit'
     inputs:
       - '@globs(sources)'
       - '@globs(configs)'

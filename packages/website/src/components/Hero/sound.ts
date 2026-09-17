@@ -1,7 +1,7 @@
 // Sounds for the hero. Browsers only allow playback after a user gesture, so autoplay may be refused
 // (ignored) while a click-driven intro will sound.
-import airlockUrl from '@richburdon/ui-core/assets/sounds/airlock.m4a?url';
-import ambienceUrl from '@richburdon/ui-core/assets/sounds/ambience.m4a?url';
+import airlockUrl from '@alienlabs/ui-core/assets/sounds/airlock.m4a?url';
+import ambienceUrl from '@alienlabs/ui-core/assets/sounds/ambience.m4a?url';
 
 export type Sound = {
   /** Start from the beginning (fading in, if configured). */

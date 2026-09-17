@@ -1,5 +1,7 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
+  // The deployed Worker keeps its original name (renaming would create a new Worker and orphan the
+  // custom domains bound to this one).
   "name": "web",
   "compatibility_date": "2026-09-15",
   "account_id": "96951f7c7cb11abdb9281c9efe7be54f",
