@@ -4,6 +4,7 @@ import { Effect, Layer, Option } from 'effect';
 import { TasksApi } from './api';
 import { TaskStore } from './store';
 
+// TODO(burdon): Impl. auth.
 const TasksLive = HttpApiBuilder.group(TasksApi, 'tasks', (handlers) =>
   Effect.gen(function* () {
     const store = yield* TaskStore;
