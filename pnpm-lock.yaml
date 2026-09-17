@@ -146,7 +146,7 @@ importers:
 
   packages/db-service:
     dependencies:
-      '@richburdon/protocol':
+      '@alienlabs/protocol':
         specifier: workspace:*
         version: link:../protocol
     devDependencies:
@@ -209,12 +209,12 @@ importers:
 
   packages/web:
     dependencies:
+      '@alienlabs/ui-core':
+        specifier: workspace:*
+        version: link:../ui-core
       '@ark-ui/solid':
         specifier: 'catalog:'
         version: 5.39.2(solid-js@1.9.15)
-      '@richburdon/ui-core':
-        specifier: workspace:*
-        version: link:../ui-core
       d3:
         specifier: 'catalog:'
         version: 7.9.0

@@ -1,4 +1,4 @@
-import { Task, decodeTask, encodeTask } from '@richburdon/protocol';
+import { Task, decodeTask, encodeTask } from '@alienlabs/protocol';
 
 export type Env = Record<string, never>;
 

@@ -1,6 +1,6 @@
 import { For } from 'solid-js';
 
-import { useI18n } from '@richburdon/ui-core/i18n';
+import { useI18n } from '@alienlabs/ui-core/i18n';
 
 import { languages } from '../../i18n';
 

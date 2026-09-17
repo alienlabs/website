@@ -2,7 +2,7 @@ import { easeCubicOut, select } from 'd3';
 import type { JSX } from 'solid-js';
 import { onCleanup, onMount, splitProps } from 'solid-js';
 
-import { mx } from '@richburdon/ui-core/utils';
+import { mx } from '@alienlabs/ui-core/utils';
 
 const LOGO_TYPE_TEXT = 'alien labs';
 

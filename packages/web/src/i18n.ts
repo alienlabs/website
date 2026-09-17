@@ -1,4 +1,4 @@
-import type { I18nOptions } from '@richburdon/ui-core/i18n';
+import type { I18nOptions } from '@alienlabs/ui-core/i18n';
 
 import type en from './locales/en/translation.json';
 

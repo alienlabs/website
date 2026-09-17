@@ -4,7 +4,7 @@ import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { join, relative, resolve } from 'node:path';
 
-const SCOPE = '@richburdon/';
+const SCOPE = '@alienlabs/';
 const DEPRECATED_FIELDS = ['browser', 'main', 'module', 'types', 'typesVersions'];
 const DEP_FIELDS = ['dependencies', 'devDependencies', 'peerDependencies', 'optionalDependencies'];
 

@@ -1,5 +1,5 @@
 {
-  "name": "@richburdon/web",
+  "name": "@alienlabs/web",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -13,8 +13,8 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
+    "@alienlabs/ui-core": "workspace:*",
     "@ark-ui/solid": "catalog:",
-    "@richburdon/ui-core": "workspace:*",
     "d3": "catalog:",
     "effect": "catalog:",
     "solid-js": "catalog:"

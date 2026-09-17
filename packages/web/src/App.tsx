@@ -1,8 +1,8 @@
 import { Show, createSignal, onCleanup } from 'solid-js';
 
-import { I18nProvider, useI18n } from '@richburdon/ui-core/i18n';
-import { ThemeProvider } from '@richburdon/ui-core/theme';
-import { mx } from '@richburdon/ui-core/utils';
+import { I18nProvider, useI18n } from '@alienlabs/ui-core/i18n';
+import { ThemeProvider } from '@alienlabs/ui-core/theme';
+import { mx } from '@alienlabs/ui-core/utils';
 
 import { Hero, type HeroController, LocaleSelect, ThemeToggle } from './components';
 import { i18nOptions } from './i18n';
