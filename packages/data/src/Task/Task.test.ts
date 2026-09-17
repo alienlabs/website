@@ -2,7 +2,7 @@ import { Schema } from 'effect';
 import { v4 as uuid } from 'uuid';
 import { describe, expect, it } from 'vitest';
 
-import { Task, decodeTask, encodeTask } from './task';
+import { Task, decodeTask, encodeTask } from './Task';
 
 const id = uuid();
 
