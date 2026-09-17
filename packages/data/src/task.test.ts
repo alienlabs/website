@@ -1,9 +1,10 @@
 import { Schema } from 'effect';
+import { v4 as uuid } from 'uuid';
 import { describe, expect, it } from 'vitest';
 
 import { Task, decodeTask, encodeTask } from './task';
 
-const id = '7f4c2b7e-8a2b-4f4e-9b1e-2c3d4e5f6a7b';
+const id = uuid();
 
 describe('Task', () => {
   it('constructs with defaults', () => {
