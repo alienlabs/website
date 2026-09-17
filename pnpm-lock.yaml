@@ -147,22 +147,6 @@ importers:
         specifier: 'catalog:'
         version: 6.0.3
 
-  packages/cloudflare:
-    dependencies:
-      '@effect/platform':
-        specifier: 'catalog:'
-        version: 0.97.2(effect@3.22.2)
-      effect:
-        specifier: 'catalog:'
-        version: 3.22.2
-    devDependencies:
-      typescript:
-        specifier: 'catalog:'
-        version: 6.0.3
-      vitest:
-        specifier: 'catalog:'
-        version: 5.0.1(vite@8.3.0(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.9.1))
-
   packages/db-service:
     dependencies:
       '@alienlabs/protocol':
