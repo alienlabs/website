@@ -31,6 +31,6 @@ describe('db-service', () => {
   it('rejects invalid tasks and unknown routes', async () => {
     expect((await call('POST', '/tasks', { title: '' })).status).toBe(400);
     expect((await call('GET', '/nope')).status).toBe(404);
-    expect((await call('PUT', '/tasks')).status).toBe(405);
+    expect((await call('GET', '/tasks/not-a-uuid')).status).toBe(400);
   });
 });

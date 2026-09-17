@@ -11,7 +11,9 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@alienlabs/protocol": "workspace:*"
+    "@alienlabs/protocol": "workspace:*",
+    "@effect/platform": "catalog:",
+    "effect": "catalog:"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "catalog:",

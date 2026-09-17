@@ -168,6 +168,12 @@ importers:
       '@alienlabs/protocol':
         specifier: workspace:*
         version: link:../protocol
+      '@effect/platform':
+        specifier: 'catalog:'
+        version: 0.97.2(effect@3.22.2)
+      effect:
+        specifier: 'catalog:'
+        version: 3.22.2
     devDependencies:
       '@cloudflare/workers-types':
         specifier: 'catalog:'
