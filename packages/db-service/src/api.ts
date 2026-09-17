@@ -6,7 +6,7 @@ import { Task } from '@alienlabs/protocol';
 const id = HttpApiSchema.param('id', Schema.UUID);
 
 /**
- * db-service: a small REST API over Task.
+ * db-service: a small REST API for Task objects.
  *
  *   GET    /tasks       list
  *   POST   /tasks       create (body: encoded Task)
