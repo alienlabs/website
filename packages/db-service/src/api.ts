@@ -1,7 +1,7 @@
 import { HttpApi, HttpApiEndpoint, HttpApiError, HttpApiGroup, HttpApiSchema } from '@effect/platform';
 import { Schema } from 'effect';
 
-import { Task } from '@alienlabs/protocol';
+import { Task } from '@alienlabs/db-protocol';
 
 const id = HttpApiSchema.param('id', Schema.UUID);
 

@@ -11,7 +11,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@alienlabs/protocol": "workspace:*",
+    "@alienlabs/db-protocol": "workspace:*",
     "@effect/platform": "catalog:",
     "effect": "catalog:"
   },

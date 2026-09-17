@@ -1,6 +1,6 @@
 import { Context, Effect, Layer, Option } from 'effect';
 
-import type { Task } from '@alienlabs/protocol';
+import type { Task } from '@alienlabs/db-protocol';
 
 type Task = Task.Task;
 
