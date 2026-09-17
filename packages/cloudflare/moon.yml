@@ -1,0 +1,13 @@
+$schema: 'https://moonrepo.dev/schemas/project.json'
+
+layer: 'library'
+language: 'typescript'
+stack: 'backend'
+
+tasks:
+  test:
+    command: 'pnpm exec vitest run'
+    inputs:
+      - '@globs(sources)'
+      - '@globs(configs)'
+      - '/tsconfig.options.json'
