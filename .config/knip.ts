@@ -6,6 +6,13 @@ const config: KnipConfig = {
       entry: ['scripts/*.mjs'],
       project: ['scripts/**/*.mjs'],
     },
+    'packages/ui-tasks': {
+      entry: ['src/index.{ts,tsx}!'],
+      project: ['src/**/*.{ts,tsx}!'],
+      storybook: true,
+      // Referenced from CSS (`@import`), which knip does not parse.
+      ignoreDependencies: ['@alienlabs/ui-core', 'tailwindcss'],
+    },
     'packages/*': {
       // `!` marks production entries, so `--production` audits `dependencies` without dev-only files.
       entry: ['src/index.{ts,tsx}!', 'i18next.config.ts'],

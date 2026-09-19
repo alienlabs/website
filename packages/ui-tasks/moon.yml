@@ -1,0 +1,19 @@
+$schema: 'https://moonrepo.dev/schemas/project.json'
+
+layer: 'library'
+language: 'typescript'
+stack: 'frontend'
+
+tasks:
+  storybook:
+    command: 'storybook dev -p 6007'
+    preset: 'server'
+
+  build-storybook:
+    command: 'storybook build'
+    inputs:
+      - '@globs(sources)'
+      - '@globs(configs)'
+      - '.storybook/**/*'
+    outputs:
+      - 'storybook-static'
