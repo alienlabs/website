@@ -1,0 +1,33 @@
+{
+  "name": "@alienlabs/ui-tasks",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "storybook": "storybook dev -p 6007",
+    "build-storybook": "storybook build"
+  },
+  "dependencies": {
+    "@alienlabs/ui-core": "workspace:*",
+    "@ark-ui/solid": "catalog:",
+    "uuid": "catalog:"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "catalog:",
+    "@tailwindcss/vite": "catalog:",
+    "storybook": "catalog:",
+    "storybook-solidjs-vite": "catalog:",
+    "tailwindcss": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vite-plugin-solid": "catalog:"
+  },
+  "peerDependencies": {
+    "solid-js": "catalog:"
+  }
+}

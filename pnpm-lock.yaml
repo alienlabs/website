@@ -18,6 +18,9 @@ catalogs:
     '@effect/platform':
       specifier: ^0.97.2
       version: 0.97.2
+    '@faker-js/faker':
+      specifier: ^10.6.0
+      version: 10.6.0
     '@tailwindcss/vite':
       specifier: ^4.3.3
       version: 4.3.3
@@ -234,6 +237,46 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: 6.0.3
+
+  packages/ui-tasks:
+    dependencies:
+      '@alienlabs/ui-core':
+        specifier: workspace:*
+        version: link:../ui-core
+      '@ark-ui/solid':
+        specifier: 'catalog:'
+        version: 5.39.2(solid-js@1.9.15)
+      solid-js:
+        specifier: 'catalog:'
+        version: 1.9.15
+      uuid:
+        specifier: 'catalog:'
+        version: 14.0.2
+    devDependencies:
+      '@faker-js/faker':
+        specifier: 'catalog:'
+        version: 10.6.0
+      '@tailwindcss/vite':
+        specifier: 'catalog:'
+        version: 4.3.3(vite@8.3.0(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.9.1))
+      storybook:
+        specifier: 'catalog:'
+        version: 10.6.0(react@19.3.0)
+      storybook-solidjs-vite:
+        specifier: 'catalog:'
+        version: 10.7.2(solid-js@1.9.15)(storybook@10.6.0(react@19.3.0))(typescript@6.0.3)(vite-plugin-solid@2.11.14(@testing-library/jest-dom@6.9.1)(solid-js@1.9.15)(vite@8.3.0(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.9.1)))(vite@8.3.0(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.9.1))
+      tailwindcss:
+        specifier: 'catalog:'
+        version: 4.3.3
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.3
+      vite:
+        specifier: 'catalog:'
+        version: 8.3.0(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.9.1)
+      vite-plugin-solid:
+        specifier: 'catalog:'
+        version: 2.11.14(@testing-library/jest-dom@6.9.1)(solid-js@1.9.15)(vite@8.3.0(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.9.1))
 
   packages/website:
     dependencies:
@@ -833,6 +876,10 @@ packages:
   '@eslint/plugin-kit@0.7.3':
     resolution: {integrity: sha512-IkO+/KEUvwbVpiURZg+P7zF74z5Jxe0UgJxVni+RtoHQ6IZieXaO02kmadomap/q+l6bc/jdPGGqTjhuZnuz1Q==}
     engines: {node: ^20.19.0 || ^22.13.0 || >=24}
+
+  '@faker-js/faker@10.6.0':
+    resolution: {integrity: sha512-3RQHgEtvL1Frl/d1cSreo7qhJ3Gk1OdNUai/CtZ8G+wYeRQnJih3s9xJ9/kgYekPQRdwgh0HXRPqMlzWGwivIQ==}
+    engines: {node: ^20.19.0 || ^22.13.0 || ^23.5.0 || >=24.0.0, npm: '>=10'}
 
   '@floating-ui/core@1.8.0':
     resolution: {integrity: sha512-0CIZ5itps/8x7BG8dEIhs53BvCUH2PCoogtakwRTut+Arm58sJooJ0AuZhLw2HJYIR5cMLNPBSS728sPho2khQ==}
@@ -4905,6 +4952,8 @@ snapshots:
     dependencies:
       '@eslint/core': 1.2.1
       levn: 0.4.1
+
+  '@faker-js/faker@10.6.0': {}
 
   '@floating-ui/core@1.8.0':
     dependencies:
