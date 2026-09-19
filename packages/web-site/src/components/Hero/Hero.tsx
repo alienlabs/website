@@ -11,8 +11,7 @@ import {
   useContext,
 } from 'solid-js';
 
-import { CLOSED_SCALE, HEX_CENTER, Logo, LOGO_SIZE, type LogoController } from '../Logo';
-import { type Point } from '../Logo/geometry';
+import { CLOSED_SCALE, HEX_CENTER, Logo, LOGO_SIZE, type LogoController, type Point } from '../Logo';
 import { LogoType, type LogoTypeController } from '../LogoType';
 import { type Drift, Mesh, type MeshController, NO_DRIFT } from '../Mesh';
 import { createAirlock, createAmbience } from './sound';

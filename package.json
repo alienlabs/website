@@ -13,9 +13,9 @@
     "lint-fix": "moon run :lint-fix",
     "format": "oxfmt",
     "format-check": "oxfmt --check",
-    "dev": "moon run website:dev",
-    "storybook": "moon run website:storybook",
-    "deploy": "moon run website:deploy",
+    "dev": "moon run web-site:dev",
+    "storybook": "moon run web-site:storybook",
+    "deploy": "moon run web-site:deploy",
     "prepare": "husky",
     "knip": "knip --config .config/knip.ts --no-config-hints && knip --config .config/knip.ts --no-config-hints --production --strict --exclude binaries,files",
     "pkg-lint": "node scripts/pkg-lint.mjs"

@@ -7,7 +7,7 @@ Monorepo managed by [moon](https://moonrepo.dev) + [pnpm](https://pnpm.io), with
 | Package | Description |
 | --- | --- |
 | `packages/ui-core` | Shared Solid utilities: theme (light/dark via `data-theme`) and i18n (i18next provider) |
-| `packages/website` | SolidJS + Vite site, deployed to Cloudflare Workers (static assets) |
+| `packages/web-site` | SolidJS + Vite site, deployed to Cloudflare Workers (static assets) |
 
 Stack: Vite, SolidJS, Tailwind CSS v4, Ark UI, Effect, i18next, Storybook, Cloudflare Workers.
 
@@ -21,11 +21,11 @@ pnpm install
 ## Commands
 
 ```bash
-moon run website:dev
-moon run website:storybook
-moon run website:build
-moon run website:typecheck
-moon run website:deploy
+moon run web-site:dev
+moon run web-site:storybook
+moon run web-site:build
+moon run web-site:typecheck
+moon run web-site:deploy
 moon run :lint
 moon run :lint-fix
 pnpm format
@@ -42,13 +42,13 @@ pnpm format
 
 ## i18n
 
-Translations live in `packages/website/src/locales/<lng>/<namespace>.json` (i18next layout) and are lazy-loaded per language. `t()` keys and interpolation params are typed from `en/translation.json` via i18next's `CustomTypeOptions` (see `packages/website/src/i18n.ts`).
+Translations live in `packages/web-site/src/locales/<lng>/<namespace>.json` (i18next layout) and are lazy-loaded per language. `t()` keys and interpolation params are typed from `en/translation.json` via i18next's `CustomTypeOptions` (see `packages/web-site/src/i18n.ts`).
 
-Locale files are maintained by [i18next-cli](https://github.com/i18next/i18next-cli) (`packages/website/i18next.config.ts`):
+Locale files are maintained by [i18next-cli](https://github.com/i18next/i18next-cli) (`packages/web-site/i18next.config.ts`):
 
 ```bash
-moon run website:i18n-extract
-moon run website:i18n-check
+moon run web-site:i18n-extract
+moon run web-site:i18n-check
 ```
 
 `i18n-extract` scans source for `t()` calls and adds/removes/sorts keys in every locale (plural forms per CLDR rules). `i18n-check` (run in CI) fails if locale files are out of sync, lints for hardcoded strings, and prints translation status. Keys built dynamically (`t(\`locale.${code}\`)`) must be declared in a comment next to the call: `// t('locale.en')`.
@@ -57,4 +57,4 @@ moon run website:i18n-check
 
 ## Deploy
 
-`website:deploy` runs `vite build` then `wrangler deploy`; the Cloudflare Vite plugin emits `dist/wrangler.json`, which wrangler picks up automatically. Requires `wrangler login` (or `CLOUDFLARE_API_TOKEN` + `CLOUDFLARE_ACCOUNT_ID`) once.
+`web-site:deploy` runs `vite build` then `wrangler deploy`; the Cloudflare Vite plugin emits `dist/wrangler.json`, which wrangler picks up automatically. Requires `wrangler login` (or `CLOUDFLARE_API_TOKEN` + `CLOUDFLARE_ACCOUNT_ID`) once.

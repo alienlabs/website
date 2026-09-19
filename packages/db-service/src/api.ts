@@ -1,3 +1,14 @@
+/**
+ * Effect concepts used in this file:
+ *
+ * - HttpApi / HttpApiGroup / HttpApiEndpoint: a declarative description of the API (paths, methods,
+ *   payload/success/error schemas) from which both the server and typed clients derive.
+ *
+ * - Schema: runtime validation + TypeScript types for request and response bodies.
+ *
+ * - HttpApiSchema.param: a typed path parameter (here a UUID).
+ */
+
 import { HttpApi, HttpApiEndpoint, HttpApiError, HttpApiGroup, HttpApiSchema } from '@effect/platform';
 import { Schema } from 'effect';
 

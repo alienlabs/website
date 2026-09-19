@@ -8,7 +8,15 @@ const config: KnipConfig = {
     },
     'packages/*': {
       // `!` marks production entries, so `--production` audits `dependencies` without dev-only files.
-      entry: ['src/index.{ts,tsx}!', 'i18next.config.ts'],
+      entry: [
+        'src/index.{ts,tsx}!',
+        'i18next.config.ts',
+        // SolidStart: entries and file-system routes.
+        'src/app.tsx!',
+        'src/entry-client.tsx!',
+        'src/entry-server.tsx!',
+        'src/routes/**/*.{ts,tsx}!',
+      ],
       project: ['src/**/*.{ts,tsx}!'],
       // Storybook 10 ships as `storybook` (no `@storybook/*` dep), which knip's auto-detection misses.
       storybook: true,

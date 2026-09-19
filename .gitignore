@@ -1,5 +1,6 @@
 node_modules/
 dist/
+.output/
 storybook-static/
 *.log
 .DS_Store

@@ -1,3 +1,18 @@
+/**
+ * Effect concepts used in this file:
+ *
+ * - Schema: a runtime validator and TypeScript type in one; `Schema.Literal`, `UUID`, `Date`,
+ *   `optional`, `Trim` and `nonEmptyString` compose into the field rules.
+ *
+ * - Schema.Class: a schema that is also a class, so `new Task({...})` validates and `instanceof`
+ *   works; `Type` is the decoded (in-memory) shape, `Encoded` the wire shape (dates as strings).
+ *
+ * - propertySignature + withConstructorDefault: a field the constructor fills in when omitted.
+ *
+ * - decodeUnknownSync / encodeSync: parse untrusted input into a Task (throwing on failure) and
+ *   turn a Task back into its wire form.
+ */
+
 import { Schema } from 'effect';
 
 export const TaskStatus = Schema.Literal('todo', 'started', 'blocked', 'done');

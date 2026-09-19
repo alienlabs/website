@@ -1,3 +1,13 @@
+/**
+ * Effect concepts used in this file:
+ *
+ * - Layer.mergeAll / Layer.provide: assemble the application's services (API + store + HTTP
+ *   platform) into one dependency graph.
+ *
+ * - HttpApiBuilder.toWebHandler: turns the API layer into a standard `(Request) => Response`
+ *   function, which is what a Cloudflare Worker's `fetch` needs.
+ */
+
 import { HttpApiBuilder, HttpServer } from '@effect/platform';
 import { Layer } from 'effect';
 

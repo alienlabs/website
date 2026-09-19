@@ -1,3 +1,16 @@
+/**
+ * Effect concepts used in this file:
+ *
+ * - HttpApiBuilder.group: implements the endpoints of one API group; the handler map is checked
+ *   against the API definition.
+ *
+ * - Effect.gen: write effects with generators; `yield*` runs an effect (or resolves a service).
+ *
+ * - Option.match / Effect.fail: turn a missing value into a typed error the API knows about.
+ *
+ * - Layer.provide: satisfy a layer's requirements with another layer (the API needs the group).
+ */
+
 import { HttpApiBuilder, HttpApiError } from '@effect/platform';
 import { Effect, Layer, Option } from 'effect';
 

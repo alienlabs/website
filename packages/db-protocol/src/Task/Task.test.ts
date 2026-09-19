@@ -1,3 +1,9 @@
+/**
+ * Effect concepts used in this file:
+ *
+ * - Schema.is: a type guard derived from a schema, for checking a value without decoding it.
+ */
+
 import { Schema } from 'effect';
 import { v4 as uuid } from 'uuid';
 import { describe, expect, it } from 'vitest';

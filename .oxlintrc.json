@@ -5,7 +5,7 @@
     "builtin": true
   },
   "globals": {},
-  "ignorePatterns": ["*.d.ts", "**/dist/**", "**/storybook-static/**", ".claude/**", ".moon/**"],
+  "ignorePatterns": ["*.d.ts", "**/dist/**", "**/.output/**", "**/storybook-static/**", ".claude/**", ".moon/**"],
   "jsPlugins": [
     "eslint-plugin-unused-imports",
     "eslint-plugin-perfectionist",

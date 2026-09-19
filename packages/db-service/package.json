@@ -13,12 +13,12 @@
   "dependencies": {
     "@alienlabs/db-protocol": "workspace:*",
     "@effect/platform": "catalog:",
-    "effect": "catalog:"
+    "effect": "catalog:",
+    "uuid": "catalog:"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "catalog:",
     "typescript": "catalog:",
-    "uuid": "catalog:",
     "vitest": "catalog:",
     "wrangler": "catalog:"
   }

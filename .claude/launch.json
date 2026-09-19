@@ -4,13 +4,13 @@
     {
       "name": "storybook",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["--filter", "@alienlabs/website", "storybook", "--no-open"],
+      "runtimeArgs": ["--filter", "@alienlabs/web-site", "storybook", "--no-open"],
       "port": 6006
     },
     {
-      "name": "website",
+      "name": "web-site",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["--filter", "@alienlabs/website", "dev"],
+      "runtimeArgs": ["--filter", "@alienlabs/web-site", "dev"],
       "port": 5173
     }
   ]
