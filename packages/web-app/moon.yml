@@ -1,0 +1,31 @@
+$schema: 'https://moonrepo.dev/schemas/project.json'
+
+layer: 'application'
+language: 'typescript'
+stack: 'frontend'
+
+tasks:
+  dev:
+    command: 'vite dev'
+    preset: 'server'
+
+  build:
+    command: 'vite build'
+    inputs:
+      - '@globs(sources)'
+      - '@globs(configs)'
+      - 'public/**/*'
+    outputs:
+      - '.output'
+
+  preview:
+    command: 'vite preview'
+    deps: ['build']
+    preset: 'server'
+
+  deploy:
+    command: 'wrangler deploy'
+    deps: ['build']
+    options:
+      cache: false
+      runInCI: false
