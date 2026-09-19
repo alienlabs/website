@@ -19,7 +19,9 @@ export default {
     }
 
     const response = await handle(request, env, pathname);
-    for (const [key, value] of Object.entries(corsHeaders)) {response.headers.set(key, value);}
+    for (const [key, value] of Object.entries(corsHeaders)) {
+      response.headers.set(key, value);
+    }
     return response;
   },
 } satisfies ExportedHandler<Env>;
