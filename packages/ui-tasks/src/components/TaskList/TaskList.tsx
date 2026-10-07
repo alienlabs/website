@@ -2,6 +2,8 @@ import { Field } from '@ark-ui/solid/field';
 import { For, createSignal } from 'solid-js';
 import { v4 as uuid } from 'uuid';
 
+import { useI18n } from '@alienlabs/ui-core/i18n';
+
 export type Task = {
   id: string;
   title: string;
@@ -39,6 +41,7 @@ export type TaskEditorProps = {
 
 export const TaskEditor = ({ task, onCreate }: TaskEditorProps) => {
   const [title, setTitle] = createSignal(task?.title ?? '');
+  const { t } = useI18n();
 
   const handleSave = () => {
     if (!title().trim()) {
@@ -53,13 +56,15 @@ export const TaskEditor = ({ task, onCreate }: TaskEditorProps) => {
       {/* <Field.Label class='text-xs'>Task</Field.Label> */}
       <Field.Input
         class='p-1 border'
-        placeholder='bananas'
+        placeholder='Task title goes here...'
         value={title()}
         onInput={(event) => setTitle(event.currentTarget.value)}
       />
       {/* <Field.HelperText class=''>Some additional Info</Field.HelperText> */}
       {/* <Field.ErrorText class=''>Error Info</Field.ErrorText> */}
-      <button onClick={handleSave}>Save</button>
+      <button type='button' class='rounded-md p-3 text-sm text-muted-foreground hover:bg-muted/50' onClick={handleSave}>
+        {t('tasks.save')}
+      </button>
     </Field.Root>
   );
 };

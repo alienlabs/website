@@ -3,14 +3,24 @@ import { Show, createSignal, onCleanup } from 'solid-js';
 import { I18nProvider, useI18n } from '@alienlabs/ui-core/i18n';
 import { ThemeProvider } from '@alienlabs/ui-core/theme';
 import { mx } from '@alienlabs/ui-core/utils';
+import { type Task, TaskList } from '@alienlabs/ui-tasks';
 
 import { Hero, type HeroController, LocaleSelect, ThemeToggle } from './components';
 import { i18nOptions } from './i18n';
+import { createTask, listTasks } from './tasks';
 
 const Page = () => {
   const { t } = useI18n();
   let hero: HeroController | undefined;
+
   const [started, setStarted] = createSignal(false);
+  const [view, setView] = createSignal<'hero' | 'tasks'>('hero');
+  const [tasks, setTasks] = createSignal<Task[]>([]);
+
+  const openTasks = async () => {
+    setView('tasks');
+    setTasks(await listTasks());
+  };
 
   // Once the intro has finished, hold for a while, then reset and offer Start again.
   const RESET_AFTER_MS = 30_000;
@@ -50,6 +60,31 @@ const Page = () => {
             onClick={() => void start()}
           >
             {t('hero.start')}
+          </button>
+          <button
+            type='button'
+            class='rounded-md p-3 text-sm text-muted-foreground hover:bg-muted/50'
+            onClick={() => void openTasks()}
+          >
+            {t('tasks.open')}
+          </button>
+        </footer>
+      </Show>
+      <Show when={view() === 'tasks'}>
+        <footer class={mx('rounded-md p-3 text-sm text-muted-foreground', panel)}>
+          <TaskList
+            tasks={tasks()}
+            onCreate={async (task) => {
+              await createTask(task.title);
+              setTasks(await listTasks());
+            }}
+          />
+          <button
+            type='button'
+            class={mx('rounded-md p-3 text-sm text-muted-foreground', panel)}
+            onClick={() => setView('hero')}
+          >
+            {t('tasks.back')}
           </button>
         </footer>
       </Show>
