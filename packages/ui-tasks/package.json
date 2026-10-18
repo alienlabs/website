@@ -13,6 +13,7 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
+    "@alienlabs/db-protocol": "workspace:*",
     "@alienlabs/ui-core": "workspace:*",
     "@ark-ui/solid": "catalog:",
     "uuid": "catalog:"

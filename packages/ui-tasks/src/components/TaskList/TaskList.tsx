@@ -2,17 +2,13 @@ import { Field } from '@ark-ui/solid/field';
 import { For, createSignal } from 'solid-js';
 import { v4 as uuid } from 'uuid';
 
+import { Task } from '@alienlabs/db-protocol';
 import { useI18n } from '@alienlabs/ui-core/i18n';
-
-export type Task = {
-  id: string;
-  title: string;
-};
 
 export type TaskListProps = {
   className?: string;
-  tasks?: Task[];
-  onCreate?: (task: Task) => void;
+  tasks?: Task.Task[];
+  onCreate?: (task: Task.Task) => void;
 };
 
 /**
@@ -35,8 +31,8 @@ export const TaskList = (props: TaskListProps) => {
 };
 
 export type TaskEditorProps = {
-  task?: Task;
-  onCreate?: (task: Task) => void;
+  task?: Task.Task;
+  onCreate?: (task: Task.Task) => void;
 };
 
 export const TaskEditor = ({ task, onCreate }: TaskEditorProps) => {
@@ -47,7 +43,11 @@ export const TaskEditor = ({ task, onCreate }: TaskEditorProps) => {
     if (!title().trim()) {
       return;
     }
-    onCreate?.({ id: task?.id ?? uuid(), title: title() });
+    onCreate?.(
+      task
+        ? new Task.Task({ ...task, title: title() })
+        : new Task.Task({ id: uuid(), createdAt: new Date(), title: title() }),
+    );
     setTitle('');
   };
 

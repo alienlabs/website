@@ -1,9 +1,10 @@
 import { Show, createSignal, onCleanup } from 'solid-js';
 
+import type { Task } from '@alienlabs/db-protocol';
 import { I18nProvider, useI18n } from '@alienlabs/ui-core/i18n';
 import { ThemeProvider } from '@alienlabs/ui-core/theme';
 import { mx } from '@alienlabs/ui-core/utils';
-import { type Task, TaskList } from '@alienlabs/ui-tasks';
+import { TaskList } from '@alienlabs/ui-tasks';
 
 import { Hero, type HeroController, LocaleSelect, ThemeToggle } from './components';
 import { i18nOptions } from './i18n';
@@ -15,7 +16,7 @@ const Page = () => {
 
   const [started, setStarted] = createSignal(false);
   const [view, setView] = createSignal<'hero' | 'tasks'>('hero');
-  const [tasks, setTasks] = createSignal<Task[]>([]);
+  const [tasks, setTasks] = createSignal<Task.Task[]>([]);
 
   const openTasks = async () => {
     setView('tasks');

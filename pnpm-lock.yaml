@@ -240,6 +240,9 @@ importers:
 
   packages/ui-tasks:
     dependencies:
+      '@alienlabs/db-protocol':
+        specifier: workspace:*
+        version: link:../db-protocol
       '@alienlabs/ui-core':
         specifier: workspace:*
         version: link:../ui-core
@@ -280,6 +283,9 @@ importers:
 
   packages/website:
     dependencies:
+      '@alienlabs/db-protocol':
+        specifier: workspace:*
+        version: link:../db-protocol
       '@alienlabs/ui-core':
         specifier: workspace:*
         version: link:../ui-core

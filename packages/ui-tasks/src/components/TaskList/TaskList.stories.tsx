@@ -3,6 +3,8 @@ import { createSignal } from 'solid-js';
 import type { Meta, StoryObj } from 'storybook-solidjs-vite';
 import { v4 as uuid } from 'uuid';
 
+import { Task } from '@alienlabs/db-protocol';
+
 import { TaskList } from './TaskList';
 
 const meta = {
@@ -15,10 +17,10 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 const makeTasks = (count = 5) =>
-  Array.from({ length: count }, () => ({
-    id: uuid(),
-    title: faker.hacker.phrase(),
-  }));
+  Array.from(
+    { length: count },
+    () => new Task.Task({ id: uuid(), createdAt: faker.date.recent(), title: faker.hacker.phrase() }),
+  );
 
 export const Default: Story = {
   args: {
