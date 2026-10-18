@@ -1,5 +1,7 @@
 import { v4 as uuid } from 'uuid';
 
+import { Task } from '@alienlabs/db-protocol';
+
 export type Env = { TASKS: KVNamespace };
 
 const corsHeaders = {
@@ -47,7 +49,16 @@ async function handle(request: Request, env: Env, pathname: string): Promise<Res
         }
         case '/task': {
           const { keys } = await env.TASKS.list();
-          const tasks = await Promise.all(keys.map(async ({ name }) => JSON.parse((await env.TASKS.get(name))!)));
+          const records = await Promise.all(keys.map(async ({ name }) => JSON.parse((await env.TASKS.get(name))!)));
+          const tasks = records.flatMap((record) => {
+            try {
+              // Records written before the Task schema lack createdAt and status.
+              const task = Task.decodeTask({ createdAt: new Date(0).toISOString(), status: 'todo', ...record });
+              return [Task.encodeTask(task)];
+            } catch {
+              return [];
+            }
+          });
           return new Response(JSON.stringify({ tasks }), {
             headers: { 'content-type': 'application/json' },
           });
@@ -63,10 +74,16 @@ async function handle(request: Request, env: Env, pathname: string): Promise<Res
       switch (pathname) {
         // curl -X POST http://localhost:8787/task -H "Content-Type: application/json" -d '{"title":"setup my computer"}'
         case '/task': {
-          const data: any = await request.json();
-          data.id = uuid();
-          await env.TASKS.put(data.id, JSON.stringify(data));
-          console.log(JSON.stringify(data));
+          const { title, description }: any = await request.json();
+          let task: Task.Task;
+          try {
+            task = new Task.Task({ id: uuid(), createdAt: new Date(), title, description });
+          } catch (err) {
+            return new Response(String(err), { status: 400 });
+          }
+          const data = JSON.stringify(Task.encodeTask(task));
+          await env.TASKS.put(task.id, data);
+          console.log(data);
           return new Response();
         }
         default: {

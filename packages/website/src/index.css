@@ -2,6 +2,7 @@
 @import '@alienlabs/ui-core/fonts.css';
 
 @source '../../ui-core/src';
+@source '../../ui-tasks/src';
 
 /* Dark mode is driven by `data-theme` on <html>; see src/theme. */
 @custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));

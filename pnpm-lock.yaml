@@ -152,6 +152,9 @@ importers:
 
   packages/cf:
     dependencies:
+      '@alienlabs/db-protocol':
+        specifier: workspace:*
+        version: link:../db-protocol
       uuid:
         specifier: 'catalog:'
         version: 14.0.2

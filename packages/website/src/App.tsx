@@ -4,7 +4,7 @@ import type { Task } from '@alienlabs/db-protocol';
 import { I18nProvider, useI18n } from '@alienlabs/ui-core/i18n';
 import { ThemeProvider } from '@alienlabs/ui-core/theme';
 import { mx } from '@alienlabs/ui-core/utils';
-import { TaskList } from '@alienlabs/ui-tasks';
+import { TaskList, actionButtonClass } from '@alienlabs/ui-tasks';
 
 import { Hero, type HeroController, LocaleSelect, ThemeToggle } from './components';
 import { i18nOptions } from './i18n';
@@ -75,18 +75,16 @@ const Page = () => {
         <footer class={mx('rounded-md p-3 text-sm text-muted-foreground', panel)}>
           <TaskList
             tasks={tasks()}
+            actions={
+              <button type='button' class={actionButtonClass} onClick={() => setView('hero')}>
+                {t('tasks.back')}
+              </button>
+            }
             onCreate={async (task) => {
               await createTask(task.title);
               setTasks(await listTasks());
             }}
           />
-          <button
-            type='button'
-            class={mx('rounded-md p-3 text-sm text-muted-foreground', panel)}
-            onClick={() => setView('hero')}
-          >
-            {t('tasks.back')}
-          </button>
         </footer>
       </Show>
     </main>
