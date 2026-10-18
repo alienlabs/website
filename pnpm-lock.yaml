@@ -152,6 +152,9 @@ importers:
 
   packages/cf:
     dependencies:
+      '@alienlabs/db-protocol':
+        specifier: workspace:*
+        version: link:../db-protocol
       uuid:
         specifier: 'catalog:'
         version: 14.0.2
@@ -240,6 +243,9 @@ importers:
 
   packages/ui-tasks:
     dependencies:
+      '@alienlabs/db-protocol':
+        specifier: workspace:*
+        version: link:../db-protocol
       '@alienlabs/ui-core':
         specifier: workspace:*
         version: link:../ui-core
@@ -280,9 +286,15 @@ importers:
 
   packages/website:
     dependencies:
+      '@alienlabs/db-protocol':
+        specifier: workspace:*
+        version: link:../db-protocol
       '@alienlabs/ui-core':
         specifier: workspace:*
         version: link:../ui-core
+      '@alienlabs/ui-tasks':
+        specifier: workspace:*
+        version: link:../ui-tasks
       '@ark-ui/solid':
         specifier: 'catalog:'
         version: 5.39.2(solid-js@1.9.15)
@@ -295,6 +307,9 @@ importers:
       solid-js:
         specifier: 'catalog:'
         version: 1.9.15
+      uuid:
+        specifier: 'catalog:'
+        version: 14.0.2
     devDependencies:
       '@cloudflare/vite-plugin':
         specifier: 'catalog:'

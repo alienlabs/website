@@ -13,6 +13,11 @@
     "ja": "Japanese",
     "label": "Language"
   },
+  "tasks": {
+    "back": "Return",
+    "open": "Tasklist",
+    "save": "Save"
+  },
   "theme": {
     "dark": "Dark",
     "light": "Light",

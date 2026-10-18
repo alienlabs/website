@@ -13,11 +13,14 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
+    "@alienlabs/db-protocol": "workspace:*",
     "@alienlabs/ui-core": "workspace:*",
+    "@alienlabs/ui-tasks": "workspace:*",
     "@ark-ui/solid": "catalog:",
     "d3": "catalog:",
     "effect": "catalog:",
-    "solid-js": "catalog:"
+    "solid-js": "catalog:",
+    "uuid": "catalog:"
   },
   "devDependencies": {
     "@cloudflare/vite-plugin": "catalog:",
