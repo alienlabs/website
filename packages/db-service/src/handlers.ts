@@ -1,7 +1,7 @@
 import { HttpApiBuilder, HttpApiError } from '@effect/platform';
 import { Effect, Layer, Option } from 'effect';
 
-import { TasksApi } from './api';
+import { Status, TasksApi } from './api';
 import { TaskStore } from './store';
 
 // TODO(burdon): Impl. auth.
@@ -11,6 +11,7 @@ const TasksLive = HttpApiBuilder.group(TasksApi, 'tasks', (handlers) =>
     const found = <A>(option: Option.Option<A>) =>
       Option.match(option, { onNone: () => Effect.fail(new HttpApiError.NotFound()), onSome: Effect.succeed });
     return handlers
+      .handle('status', () => Effect.succeed(new Status({ timestamp: new Date() })))
       .handle('list', () => store.list())
       .handle('create', ({ payload }) => store.put(payload).pipe(Effect.as(payload)))
       .handle('read', ({ path }) => store.get(path.id).pipe(Effect.flatMap(found)))

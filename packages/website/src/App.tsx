@@ -8,7 +8,7 @@ import { TaskList, actionButtonClass } from '@alienlabs/ui-tasks';
 
 import { Hero, type HeroController, LocaleSelect, ThemeToggle } from './components';
 import { i18nOptions } from './i18n';
-import { createTask, listTasks } from './tasks';
+import { createTask, listTasks, status } from './tasks';
 
 const Page = () => {
   const { t } = useI18n();
@@ -68,6 +68,13 @@ const Page = () => {
             onClick={() => void openTasks()}
           >
             {t('tasks.open')}
+          </button>
+          <button
+            type='button'
+            class='rounded-md p-3 text-sm text-muted-foreground hover:bg-muted/50'
+            onClick={() => void status()}
+          >
+            {t('tasks.status')}
           </button>
         </footer>
       </Show>

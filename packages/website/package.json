@@ -19,7 +19,8 @@
     "@ark-ui/solid": "catalog:",
     "d3": "catalog:",
     "effect": "catalog:",
-    "solid-js": "catalog:"
+    "solid-js": "catalog:",
+    "uuid": "catalog:"
   },
   "devDependencies": {
     "@cloudflare/vite-plugin": "catalog:",

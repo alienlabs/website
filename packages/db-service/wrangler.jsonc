@@ -10,5 +10,8 @@
       "invocation_logs": true,
       "persist": true,
     },
+    "traces": {
+      "enabled": false,
+    },
   },
 }
